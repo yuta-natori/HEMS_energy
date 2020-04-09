@@ -1,0 +1,277 @@
+
+
+.header {
+	position: fixed;
+	top: 0;
+	left: 0;
+	background-color:#4B0082;
+	color:white;
+	width:100%;
+	height: 60px;
+	display: block;
+	content: "";
+	clear: both;
+	margin: 0;
+}
+
+.header h1 {
+	font-size:30px;
+	margin: 0;
+	padding-left: 10px;
+	padding-top: 10px;
+	float: left;
+}
+
+.header h1 a {
+	color: white;
+	text-decoration: none;
+}
+
+.header p {
+	margin: 0;
+	margin-right: auto;
+	padding-right: 15px;
+	padding-top: 17px;
+	list-style: none;
+	float: right;
+}
+
+.header p a {
+	color: white;
+	text-decoration: none;
+}
+
+body {
+	margin: 0;
+	margin-top: 60px;
+	font-family: 'Lato',"游ゴシック Medium",YuGothic,YuGothicM,'Noto Sans JP', 'ヒラギノ角ゴ ProN', 'Hiragino Kaku Gothic ProN', 'メイリオ', Meiryo, 'ＭＳ Ｐゴシック', 'MS PGothic', sans-serif;
+}
+
+.main    {
+	content: "";
+	display: block;
+	clear: both;
+}
+
+
+.menu {
+	position: relative;
+	float: left;
+}
+
+.menu .link {
+	position: fixed;
+	left: -100vw;
+	width: 250px;
+	height: 465px;
+	cursor: pointer;
+	-webkit-transition: 0.53s transform;
+	        transition: 0.53s transform;
+	-webkit-transition-timing-function: cubic-bezier(.38,.52,.23,.99);
+	        transition-timing-function: cubic-bezier(.38,.52,.23,.99);
+	background-color: #000000;
+	opacity: 0.8;
+}
+
+.menu .link ul {
+	margin: 0;
+	padding-left: 40px;
+}
+
+.menu .link .fa-ul {
+	list-style-type: none;
+	}
+
+.menu .link .fa-ul li:hover {
+	background-color: #444444;
+	}
+
+
+.link .fa-ul li {
+	position: relative;
+	}
+
+.link .fa-li {
+	position: absolute;
+	left: -2.142857142857143em;
+	width: 2.142857142857143em;
+	text-align: center;
+}
+
+.link li a {
+	display: block;
+	padding: 20px;
+	text-decoration: none;
+	color: #ffffff;
+	border-bottom: 1px solid #ffffff;
+}
+
+.menu #toggle {
+	display: none;
+}
+
+.menu #toggle:checked ~ .link {
+	-webkit-transform: translateX(100vw);
+	        transform: translateX(100vw);
+}
+
+/* menu toggle */
+
+.menu #toggle ~ label {
+	position: fixed;
+	padding: 1em;
+	cursor: pointer;
+	-webkit-transition: 0.5s transform;
+	        transition: 0.5s transform;
+	-webkit-transition-timing-function: cubic-bezier(.61,-0.38,.37,1.27);
+	        transition-timing-function: cubic-bezier(.61,-0.38,.37,1.27);
+	color: #333333;
+	float: left;
+}
+
+.menu #toggle:checked ~ label {
+	-webkit-transform: translateX(250px);
+	        transform: translateX(250px);
+}
+
+.jyuyou_class {
+	content: "";
+	display: block;
+	clear: both;
+	margin: 20px;
+	margin-left: 120px;
+	width: 1100px;
+	border-radius: 5px;
+	float: left;
+}
+
+.jyuyou_class h2 {
+	background: #D62612;
+	color: #FFF;
+	margin: 0;
+}
+
+.input {
+	float: left;
+	width: 27%;
+}
+
+.jyuyou_class .jyuyou_inner {
+	padding: .5em;
+}
+
+.kion_inner {
+	padding-left: .5em;
+	padding-bottom: .5em;
+}
+
+.db_select_data {
+	margin-left: 10px;
+}
+
+.chiiki {
+	padding-left: .5em;
+	padding-bottom: .5em;
+}
+
+.chiiki_select {
+	margin-left: 10px;
+}
+
+.kikan_select {
+	padding-left: .5em;
+	padding-bottom: .5em;
+}
+
+.yyyymmdd {
+	margin-left: 10px;
+}
+
+.bunsekijiki {
+	padding-left: .5em;
+	padding-bottom: .5em;
+}
+
+.jiki_select {
+	margin-left: 10px;
+}
+
+.number_input {
+	padding-left: .5em;
+	padding-bottom: .5em;
+}
+
+.normal_number_input {
+	padding-left: .5em;
+	padding-bottom: .5em;
+}
+
+
+.form_number {
+	margin-left: 10px;
+}
+
+.submit {
+	margin-left: 60px;
+}
+
+.cp_tab ul{
+	margin:0;
+	padding:0;
+}
+
+.cp_tab ul li {
+	list-style: none;
+	margin:0;
+	padding:0;
+	font-size:80%;
+	float: left;
+	width: 180px;/*親メニューの幅*/
+	height: 40px;/*親メニューの高さ*/
+	line-height: 40px;
+	background: white;/*親メニューの背景色*/
+	color: black;/*親メニューの文字色*/
+	text-align:center;
+}
+
+.cp_tab ul li a {
+	color: black;
+	display: block;
+	text-decoration: none;
+}
+
+.cp_tab ul li:hover, .cp_tab ul li a:hover {
+	background: whitesmoke;/*ホバー時の親メニューの背景色*/
+	color: royalblue;/*ホバー時の親メニューの文字色*/
+}
+
+.cp_tab ul li ul {
+	top: 40px;/*親メニューの高さと同じにする*/
+	width: 180px;
+}
+
+.cp_tab ul li ul li {
+	visibility: hidden;
+	overflow: hidden;
+	width: 180px;/*サブメニューの幅*/
+	height: 0;
+	background: whitesmoke;/*サブメニューの背景色*/
+}
+
+.cp_tab ul li ul li:hover, .cp_tab ul li ul li a:hover {
+	background: #DCDCDC;/*ホバー時のサブメニューの背景色*/
+}
+
+.cp_tab ul li:hover ul li, .cp_tab ul li a:hover ul li{
+	visibility: visible;
+	overflow: visible;
+	height:40px;/*サブメニューの高さ*/
+}
+
+.cp_tab * {
+	-webkit-transition: 0.5s;
+	-moz-transition: 0.5s;
+	-ms-transition: 0.5s;
+	-o-transition: 0.5s;
+	transition: 0.5s;
+}

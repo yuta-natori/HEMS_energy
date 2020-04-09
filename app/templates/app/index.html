@@ -1,0 +1,118 @@
+<!doctype html>
+{% load static %}
+
+<html lang="ja">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+		<script src="https://kit.fontawesome.com/d995c7ddf7.js" crossorigin="anonymous"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+		<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.min.js"></script>
+		<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1/i18n/jquery.ui.datepicker-ja.min.js"></script>
+		<link href="https://fonts.googleapis.com/css?family=Lato:400,700|Noto+Sans+JP:400,700" rel="stylesheet">
+		<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/smoothness/jquery-ui.css" >
+		
+		<script type="text/javascript">
+		$(function(){
+			var from = $("#from").datepicker({
+					onSelect: function(selectedDate) {
+					$("#to").datepicker("option","minDate",selectedDate);
+				}
+			});
+				var to =$("#to").datepicker({
+					onSelect: function(selectedDate){
+					$("#from").datepicker("option","maxDate",selectedDate);
+				}
+			});
+			});
+		</script>
+
+		<title>HEMSエネルギーデータ分析</title>
+		<div class="header">
+			<h1><a href="/">HEMSエネルギーデータ分析</a></h1>
+				<p><a href="#">ログアウト</a></p>
+		</div>
+		
+	</head>
+
+	 <body>
+		
+		<div class="main">
+		
+			<div class="menu">
+				<input type="checkbox"  id="toggle">
+				<label for="toggle"><span class="fas fa-bars fa-2x"></span></label>
+				
+					<div class="link">
+					
+						<ul class="fa-ul">
+							<li><a href="#"><i class="fas fa-file-upload fa-li"></i>分析データ作成</a></li>
+							<li><a href="toukei_keisan"><i class="fas fa-calculator fa-li"></i>基本統計量の計算</a></li>
+							<li><a href="jyuyou_class"><i class="fas fa-chart-bar fa-li"></i>需要クラス別分析</a></li>
+							<li><a href="jyuyou_trend"><i class="fas fa-chart-line fa-li"></i>需要トレンド分析</a></li>
+							<li><a href="jyuyou_modeling"><i class="fab fa-think-peaks fa-li"></i>需要モデリング</a></li>
+							<li><a href="chouki_yosoku"><i class="fas fa-chart-area fa-li"></i>長期需要予測</a></li>
+							<li><a href="tanki_yosoku"><i class="fas fa-chart-area fa-li"></i>短期需要予測</a></li>
+						</ul>
+					
+					</div>
+					
+			</div>
+			
+			<div class="input">
+			
+				<div class="data_strage">
+					<h2><i class="fas fa-file-upload fa-fw"></i>収集データ格納</h2>
+					
+					<div class="ds_inner">
+						<p class="file_specified">■ファイル場所の指定</p>
+						<p class="explain">・ファイル名の指定　:　yyyymmdd_yyyymmdd_地域名.csv<br>
+						（一つ目の「yyyymmdd」は開始日付、二つ目の「yyyymmdd」は終了日付を入力、地域名は漢字で指定してください）</p>
+						<p class="reference"><input type="file" name="data_create" size="60"> </p>
+						<p class="submit"><input type="submit" value="実行"></p>
+					</div>
+					
+				</div>
+				
+				<div class="temp_data">
+					<h2><i class="fas fa-file-upload fa-fw"></i>気温データ格納</h2>
+					
+					<div class="td_inner">
+						<p class="file_specified">■ファイル場所の指定</p>
+						<p class="explain">・ファイル名の指定　:　temperature_地域名_yyyy_yyyy.csv<br>
+						（一つ目の「yyyy」は開始年、二つ目の「yyyy」は終了年を入力、地域名は漢字で指定してください）</p>
+						<form action="{% url 'app:temperature' %}" method="post">
+    						{% csrf_token %}
+    						<p class="reference"><input type="file" name="data_create" size="60"> </p>
+    						<p class="submit"><input type="submit" value="実行"></p>
+    					</form>
+					</div>
+					
+				</div>
+				
+				<div class="holiday">
+					<h2><i class="fas fa-file-upload fa-fw"></i>休日データ作成</h2>
+					
+					<div class="hd_inner">
+						<p class="file_specified">■期間を入力して休日データを作成します</p>
+						<form action="{% url 'app:holiday' %}" method="post">
+							{% csrf_token %}
+							<p class="yyyymmdd"><input type="text" id="from" name="from"/>から</p>
+							<p class="yyyymmdd"><input type="text" id="to" name="to"/>まで</p>
+							<p class="submit"><input type="submit" value="実行"></p>
+						</form>
+					</div>
+					
+				</div>
+				
+			</div>
+			
+		</div>
+		
+		<script>
+		<!-- jQuery first, then Tether, then Bootstrap JS. -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+	</body>
+</html>
