@@ -106,6 +106,38 @@ def temperature(request):
         temp.to_sql('shinyoko_temp', url, index=None,if_exists = 'append')
         
         return render(request,'app/index.html',{})
+def electric_power(request):
+    
+    if request.method == 'POST':
+        
+        electricFile = request.POST.get('data_create')
+    
+        ##Path指定
+        os.chdir("C:\\Users\\ClientAdmin\\Desktop\\受領\\受領\\HEMS_Analysis_demo")
+    
+        ##地域指定
+        region = 'shinyoko'
+        #def main():
+            # MySQL接続
+        cnt = mysql.connector.connect(
+              host='192.168.56.1', # 接続先
+              port='3306',
+              user='user', # mysqlのuser
+              password='pass', # mysqlのpassword
+              database='hems_data_shinyoko',
+              charset='utf8',
+              auth_plugin='mysql_native_password'
+              )
+        
+        # カーソル取得
+        cnt.cursor(buffered=True)
+            
+        url = 'mysql://user:pass@192.168.56.1/hems_data_shinyoko?charset=utf8'
+        sqa.create_engine(url, echo=True)
+        data = pd.read_csv(electricFile) 
+        data.to_sql('%s_data'%region, url, index=None,if_exists = 'replace')
+
+        return render(request,'app/index.html',{})
 
 def toukei_keisan(request):
     # 対応するhtmlファイルを指定

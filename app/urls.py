@@ -6,6 +6,7 @@ urlpatterns = [
   path('', views.index,  name='index'),
   path('holiday', views.holiday,  name='holiday'),
   path('temperature', views.temperature,  name='temperature'),
+  path('electric_power', views.electric_power,  name='electric_power'),
   path('toukei_keisan', views.toukei_keisan,  name='toukei_keisan'),
   path('jyuyou_class', views.jyuyou_class, name='jyuyou_class'),
   path('jyuyou_trend', views.jyuyou_trend, name='jyuyou_trend'),

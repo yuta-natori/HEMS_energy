@@ -21,11 +21,4 @@ from django.urls import path,include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',include('app.urls')),
-    path('holiday', include('app.urls')),
-    path('toukei_keisan', include('app.urls')),
-    path('jyuyou_class', include('app.urls')),
-    path('jyuyou_trend', include('app.urls')),
-    path('jyuyou_modeling', include('app.urls')),
-    path('chouki_yosoku', include('app.urls')),
-    path('tanki_yosoku', include('app.urls')),
 ]

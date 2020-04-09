@@ -70,8 +70,11 @@
 						<p class="file_specified">■ファイル場所の指定</p>
 						<p class="explain">・ファイル名の指定　:　yyyymmdd_yyyymmdd_地域名.csv<br>
 						（一つ目の「yyyymmdd」は開始日付、二つ目の「yyyymmdd」は終了日付を入力、地域名は漢字で指定してください）</p>
-						<p class="reference"><input type="file" name="data_create" size="60"> </p>
-						<p class="submit"><input type="submit" value="実行"></p>
+						<form action="{% url 'app:electric_power' %}" method="post">
+    						{% csrf_token %}
+    						<p class="reference"><input type="file" name="data_create" size="60"> </p>
+    						<p class="submit"><input type="submit" value="実行"></p>
+    					</form>
 					</div>
 					
 				</div>
