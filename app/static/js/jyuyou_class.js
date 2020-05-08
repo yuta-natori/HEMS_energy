@@ -1,5 +1,5 @@
 function chkselect() {
-    $val = $("select[name='jiki']").val();
+    $val = $("select[name='season']").val();
 
     if($val == 'year'){
         document.getElementById("number_input").style.display="block";

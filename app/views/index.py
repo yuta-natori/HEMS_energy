@@ -7,6 +7,8 @@ from datetime import timedelta
 import pandas as pd
 import mysql.connector
 import os
+#form
+from app.demand_class_form import DemandClassForm
 
 def index(request):
     if request.method == 'GET':
@@ -143,8 +145,11 @@ def toukei_keisan(request):
     # 対応するhtmlファイルを指定
     return render(request,'app/toukei_keisan.html',{})
     
-def jyuyou_class(request):
-	return render(request, 'app/jyuyou_class.html',{})
+def demand_class(request):
+    params = {
+        'form': DemandClassForm()
+    }
+    return render(request, 'app/jyuyou_class.html',params)
     
 def jyuyou_trend(request):
 	return render(request, 'app/jyuyou_trend.html',{})
