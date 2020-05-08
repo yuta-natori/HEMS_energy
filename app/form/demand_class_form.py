@@ -17,6 +17,11 @@ CHOICE_SEASONS = (
     ("winter", "冬季分析（12月～2月）")    
 )
 
+CHOICE_YEARS = (
+    (1999, 1999),
+    (2000, 2000)
+)
+
 class DemandClassForm(forms.Form):
     data = forms.ChoiceField(
         widget=forms.Select, 
@@ -33,7 +38,7 @@ class DemandClassForm(forms.Form):
     
     year = forms.ChoiceField(
         label='予測開始年月日年の選択',
-        choices=CHOICE_DATAS,
+        choices=CHOICE_YEARS,
     )
     
     season = forms.ChoiceField(
