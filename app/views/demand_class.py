@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 from io import BytesIO
 import base64
 #form
-from app.demand_class_form import DemandClassForm
+from app.form.demand_class_form import DemandClassForm
 
 def analysis_demand_class(request):    
  

@@ -11,7 +11,7 @@ from app.form.index_form import TemperatureForm
 from app.form.index_form import ElectricPowerForm
 from app.form.index_form import HolidayForm
 
-from app.demand_class_form import DemandClassForm
+from app.form.demand_class_form import DemandClassForm
 
 def init():
     params = {
