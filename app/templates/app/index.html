@@ -16,14 +16,14 @@
 		
 		<script type="text/javascript">
 		$(function(){
-			var from = $("#from").datepicker({
+			var fromHoliday = $("#id_fromHoliday").datepicker({
 					onSelect: function(selectedDate) {
-					$("#to").datepicker("option","minDate",selectedDate);
+					$("#id_toHoliday").datepicker("option","minDate",selectedDate);
 				}
 			});
-				var to =$("#to").datepicker({
+				var to =$("#id_toHoliday").datepicker({
 					onSelect: function(selectedDate){
-					$("#from").datepicker("option","maxDate",selectedDate);
+					$("#id_fromHoliday").datepicker("option","maxDate",selectedDate);
 				}
 			});
 			});
@@ -72,7 +72,7 @@
 						（一つ目の「yyyymmdd」は開始日付、二つ目の「yyyymmdd」は終了日付を入力、地域名は漢字で指定してください）</p>
 						<form action="{% url 'app:electric_power' %}" method="post">
     						{% csrf_token %}
-    						<p class="reference"><input type="file" name="data_create" size="60"> </p>
+    						<p class="reference">{{ electricPower.epFile }}</p>
     						<p class="submit"><input type="submit" value="実行"></p>
     					</form>
 					</div>
@@ -88,7 +88,7 @@
 						（一つ目の「yyyy」は開始年、二つ目の「yyyy」は終了年を入力、地域名は漢字で指定してください）</p>
 						<form action="{% url 'app:temperature' %}" method="post">
     						{% csrf_token %}
-    						<p class="reference"><input type="file" name="data_create" size="60"> </p>
+    						<p class="reference">{{ temperature.tmpFile }}</p>
     						<p class="submit"><input type="submit" value="実行"></p>
     					</form>
 					</div>
@@ -102,8 +102,8 @@
 						<p class="file_specified">■期間を入力して休日データを作成します</p>
 						<form action="{% url 'app:holiday' %}" method="post">
 							{% csrf_token %}
-							<p class="yyyymmdd"><input type="text" id="from" name="from"/>から</p>
-							<p class="yyyymmdd"><input type="text" id="to" name="to"/>まで</p>
+							<p class="yyyymmdd">{{ holiday.fromHoliday }}から</p>
+							<p class="yyyymmdd">{{ holiday.toHoliday }}まで</p>
 							<p class="submit"><input type="submit" value="実行"></p>
 						</form>
 					</div>
