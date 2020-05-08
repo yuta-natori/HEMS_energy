@@ -7,23 +7,35 @@ from datetime import timedelta
 import pandas as pd
 import mysql.connector
 import os
-#form
+from app.form.index_form import TemperatureForm
+from app.form.index_form import ElectricPowerForm
+from app.form.index_form import HolidayForm
+
 from app.demand_class_form import DemandClassForm
+
+def init():
+    params = {
+                'temperature' : TemperatureForm(),
+                'electricPower' : ElectricPowerForm(),
+                'holiday' : HolidayForm()
+                }
+    return params
 
 def index(request):
     if request.method == 'GET':
-    	return  render(request,'app/index.html',{})  
-	
+        params = init()
+        return render(request, 'app/index.html', params)
+    
 def holiday(request):
     if request.method == 'POST':
         def daterange(date1,date2):    
             for n in range(int((date2 - date1).days)+1):
                 yield date1 + timedelta(n)
         
-        holidayFrom = request.POST.get('from')
-        holidayTo = request.POST.get('to')
-        start_date = datetime.strptime(holidayFrom, '%Y/%m/%d').date()
-        end_date   = datetime.strptime(holidayTo, '%Y/%m/%d').date()
+        fromHoliday = request.POST.get('fromHoliday')
+        toHoliday = request.POST.get('toHoliday')
+        start_date = datetime.strptime(fromHoliday, '%Y/%m/%d').date()
+        end_date   = datetime.strptime(toHoliday, '%Y/%m/%d').date()
         
         #evens[]リスト作成 
         evens = [] 
@@ -68,12 +80,16 @@ def holiday(request):
         url = 'mysql://user:pass@192.168.56.1/hems_data_shinyoko?charset=utf8'
         sqa.create_engine(url, echo=True)
         
-        holiday.to_sql('holiday', url, index=None,if_exists = 'replace')  
-        return render(request,'app/index.html',{})
+        holiday.to_sql('holiday', url, index=None,if_exists = 'replace')
+        
+        params = init()
+        params['holiday'] = HolidayForm(request.POST)
+        
+        return render(request,'app/index.html', params)
 def temperature(request):
     
     if request.method == 'POST':
-        temperatureFile = request.POST.get('data_create')
+        temperatureFile = request.POST.get('tmpFile')
     
         cnt = mysql.connector.connect(
           host='192.168.56.1', # 接続先
@@ -107,12 +123,15 @@ def temperature(request):
         temp['date'] = temp['date'].dt.strftime("%Y/%m/%d")
         temp.to_sql('shinyoko_temp', url, index=None,if_exists = 'append')
         
-        return render(request,'app/index.html',{})
+        params = init()
+        params['temperature'] = TemperatureForm(request.POST)
+        
+        return render(request,'app/index.html', params)
 def electric_power(request):
     
     if request.method == 'POST':
         
-        electricFile = request.POST.get('data_create')
+        electricFile = request.POST.get('epFile')
     
         ##Path指定
         os.chdir("C:\\Users\\ClientAdmin\\Desktop\\受領\\受領\\HEMS_Analysis_demo")
@@ -138,8 +157,11 @@ def electric_power(request):
         sqa.create_engine(url, echo=True)
         data = pd.read_csv(electricFile) 
         data.to_sql('%s_data'%region, url, index=None,if_exists = 'replace')
+        
+        params = init()
+        params['electricPower'] = ElectricPowerForm(request.POST)
 
-        return render(request,'app/index.html',{})
+        return render(request,'app/index.html', params)
 
 def toukei_keisan(request):
     # 対応するhtmlファイルを指定
