@@ -59,6 +59,9 @@ def holiday(request):
                         else:                    
                             hois = hois                    
                             evens.append(HolidayData(date=date, is_holiday=hois)) 
+        
+        #事前にテーブルのデータを削除
+        HolidayData.objects.all().delete()
         #evens[]リストをDBに登録        
         HolidayData.objects.bulk_create(evens)
         
