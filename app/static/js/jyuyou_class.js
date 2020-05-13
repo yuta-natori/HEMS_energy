@@ -19,3 +19,13 @@ function chkselect() {
         document.getElementById("winter_number_input").style.display="none";
     }
 }
+
+function clickDistribution() {
+    document.getElementById("distribution_img").style.display="block";
+    document.getElementById("histogram_img").style.display="none";
+}
+
+function clickHistogram() {
+    document.getElementById("distribution_img").style.display="none";
+    document.getElementById("histogram_img").style.display="block";
+}

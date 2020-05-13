@@ -110,16 +110,20 @@
 				<div class="cp_tab">
 				
 					<ul>
-						<li><a href="#" onclick="distribution()">データテーブル</a></li>
+						<li><a href="#" onclick="clickDistribution()">データテーブル</a></li>
 						
-						<li><a href="#" onclick="histogram()">需要クラス別分析</a></li>
+						<li><a href="#" onclick="clickHistogram()">需要クラス別分析</a></li>
 						
 						{% if distribution %}
-                        <img src={{distribution}} />
+						<div id="distribution_img">
+                            <img src={{distribution}} />
+						</div>
 						{% endif %}
 						
 						{% if histogram %}
-                        <img src={{histogram}} />
+						<div id="histogram_img">
+                            <img src={{histogram}} />
+                        </div>
 						{% endif %}
 					</ul>
 				</div>
