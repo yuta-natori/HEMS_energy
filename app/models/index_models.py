@@ -3,7 +3,7 @@ from django.db import models
 # Create your models here.
 
 class HolidayData(models.Model):
-    date = models.TextField()
+    date = models.CharField(max_length=10,primary_key=True)
     is_holiday = models.BigIntegerField()
     
     class Meta:
