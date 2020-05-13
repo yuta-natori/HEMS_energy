@@ -10,6 +10,7 @@ import os
 from app.form.index_form import TemperatureForm
 from app.form.index_form import ElectricPowerForm
 from app.form.index_form import HolidayForm
+from app.models.index_models import HolidayData
 
 def init():
     params = {
@@ -52,33 +53,12 @@ def holiday(request):
                         day = date[5:10]                           #三が日に1 の値を入れる 
                         if day == "01/01" or day == "01/02" or day == "01/03":                    
                             hois = 1                    
-                            evens.append([date,hoho,hyo,hois,day])                
+                            evens.append(HolidayData(date=date, is_holiday=hois))           
                         else:                    
                             hois = hois                    
-                            evens.append([date,hoho,hyo,hois,day])                    
-        #evens[]リストをデータフレームに変換                    
-        holiday = pd.DataFrame(evens,columns = ['date','holiday','youbi','is_holiday','day'])                    
-        holiday = holiday[['date','is_holiday']]            
-             
-        
-        #sql書き込み
-        cnt = mysql.connector.connect(
-              host='192.168.56.1', # 接続先
-              port='3306',
-              user='user', # mysqlのuser
-              password='pass', # mysqlのpassword
-              database='hems_data_shinyoko',
-              charset='utf8' ,
-              auth_plugin='mysql_native_password'
-              )
-        cnt.cursor()
-        
-        # カーソル取得
-        cnt.cursor(buffered=True)    
-        url = 'mysql://user:pass@192.168.56.1/hems_data_shinyoko?charset=utf8'
-        sqa.create_engine(url, echo=True)
-        
-        holiday.to_sql('holiday', url, index=None,if_exists = 'replace')
+                            evens.append(HolidayData(date=date, is_holiday=hois)) 
+        #evens[]リストをDBに登録        
+        HolidayData.objects.bulk_create(evens)
         
         params = init()
         params['holiday'] = HolidayForm(request.POST)
