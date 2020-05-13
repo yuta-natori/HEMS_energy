@@ -50,13 +50,6 @@
 					<form action="{% url 'app:analysis_demand_class' %}" method="post">	
     					{% csrf_token %}
     					
-    					<div class="jyuyou_inner">
-    						<p>■使用データの指定</p>
-    						<p class="db_select_data">
-        						{{ form.data }}
-      						</p>
-    					</div>
-    					
     					<div class="chiiki">
     						<p>■地域の指定</p>
     						<p class="chiiki_select">

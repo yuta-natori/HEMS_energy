@@ -2,14 +2,6 @@
 from django import forms
 from django.views import generic
 
-CHOICE_DATAS = (
-    (None, "-"),
-    (1, "DBデータから選択1"),
-    (2, "DBデータから選択2"),
-    (3, "DBデータから選択3"),
-    (4, "DBデータから選択4")
-)
-
 CHOICE_SEASONS = (
     (None, "-"),
     ("year", "年間分析"),
@@ -18,18 +10,13 @@ CHOICE_SEASONS = (
 )
 
 CHOICE_YEARS = (
+    (2014, 2014),
+    (2015, 2015),
     (1999, 1999),
     (2000, 2000)
 )
 
 class DemandClassForm(forms.Form):
-    data = forms.ChoiceField(
-        widget=forms.Select, 
-        choices=CHOICE_DATAS, 
-        label='使用データの指定',
-        required=True,
-    )
-
     area = forms.CharField(
         label='地域の指定',
         max_length=50,
@@ -44,6 +31,7 @@ class DemandClassForm(forms.Form):
     season = forms.ChoiceField(
         label='分析時期の選択',
         choices=CHOICE_SEASONS,
+        required=False,
         widget=forms.Select(attrs = {'onchange' : "chkselect();"})
     )
     
