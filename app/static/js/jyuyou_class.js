@@ -1,3 +1,7 @@
+window.onload = function() {
+  chkselect()
+}
+
 function chkselect() {
     $val = $("select[name='season']").val();
 

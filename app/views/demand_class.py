@@ -30,10 +30,6 @@ def analysis_demand_class(request):
         data_sum['count'] = count #countを追加
             
         global fig,plot
-        
-        #fig = plt.figure(figsize = (6, 5))
-        #ax = plt.subplot(2,1,1)
-        #ax.set_position([0.2,0.64,0.7,0.3])
         #年間
         #目盛　内向き
         plt.rcParams['xtick.direction'] = 'in'
@@ -57,12 +53,13 @@ def analysis_demand_class(request):
         plt.tick_params(length = 3) #仮
     
         #クラス分け　ライン(横)
-        xmin, xmax = 0,data_sum['count'].count()
-        plt.hlines([line_low], xmin, xmax, '#e41a1c', linestyles='solid',linewidth = 1.5) 
-        plt.hlines([line_high], xmin, xmax, '#e41a1c', linestyles='solid',linewidth = 1.5)
-        plt.text(data_sum['count'].count()-5,line_low+100, "%s"%line_low,size = 11, color = "#e41a1c")
-        plt.text(data_sum['count'].count()-6,line_high+100, "%s"%line_high,size = 11, color = "#e41a1c")
-        #fig.savefig("%s年　需要家別電力需要量分布(年間).png"%y)
+        #ライン設定時のみ適用
+        if line_low is not None and line_high is not None:
+            xmin, xmax = 0,data_sum['count'].count()
+            plt.hlines([line_low], xmin, xmax, '#e41a1c', linestyles='solid',linewidth = 1.5) 
+            plt.hlines([line_high], xmin, xmax, '#e41a1c', linestyles='solid',linewidth = 1.5)
+            plt.text(data_sum['count'].count()-5,line_low+100, "%s"%line_low,size = 11, color = "#e41a1c")
+            plt.text(data_sum['count'].count()-6,line_high+100, "%s"%line_high,size = 11, color = "#e41a1c")
         
         #作成したグラフをPNG形式に変換
         fig.canvas.draw()
@@ -73,9 +70,7 @@ def analysis_demand_class(request):
         buffer = BytesIO() 
         img.save(buffer, format="PNG")
         base64Img = base64.b64encode(buffer.getvalue()).decode().replace("'", "")
-    
-        #ax_ = plt.subplot(2,1,2)
-        #ax_.set_position([0.2,0.13,0.7,0.3])
+
         #年間
         #目盛　外向き
         plt.rcParams['xtick.direction'] = 'out'
@@ -103,11 +98,11 @@ def analysis_demand_class(request):
         ax.spines["right"].set_color("none")
         
         #クラス分け　ライン(縦)
-        ymin, ymax = 0,20
-        plt.vlines([line_low], ymin, ymax, '#e41a1c', linestyles='solid',linewidth = 1.5) 
-        plt.vlines([line_high], ymin, ymax, '#e41a1c', linestyles='solid',linewidth = 1.5)
-        
-        #fig_.savefig("電力需要量―需要家ヒストグラム%s年.png"%y)
+        #ライン設定時のみ適用
+        if line_low is not None and line_high is not None:
+            ymin, ymax = 0,20
+            plt.vlines([line_low], ymin, ymax, '#e41a1c', linestyles='solid',linewidth = 1.5) 
+            plt.vlines([line_high], ymin, ymax, '#e41a1c', linestyles='solid',linewidth = 1.5)
         
         fig_.canvas.draw()
         im_ = np.array(fig_.canvas.renderer.buffer_rgba())
@@ -117,9 +112,7 @@ def analysis_demand_class(request):
         buffer_ = BytesIO() 
         img_.save(buffer_, format="PNG")
         base64Img_ = base64.b64encode(buffer_.getvalue()).decode().replace("'", "")
-        
-        print(base64Img)
-        print(base64Img_)
+
         return base64Img, base64Img_
     
     #日本語　フォント
@@ -139,39 +132,55 @@ def analysis_demand_class(request):
               )
     
     #期間指定
-    date1_base = '2015-01-01'
-    date2_base = '2015-12-31'
+    select_year = request.POST['year']
     
     #分析したい年の入力
-    s_date = '2015/01/01'
-    e_date = '2015/12/31'
+    s_date = select_year + '/1/1'
+    e_date = select_year + '/12/31'
     
+    #分析時期判定
+    select_season = request.POST['season']
+    line_low = None
+    line_high = None
+    
+    if select_season == 'year':
+        line_low, line_high = setLineHighLow(
+            request.POST['year_min_line'], 
+            request.POST['year_max_line'])
+        
+    elif select_season == 'summer':
+        line_low, line_high = setLineHighLow(
+            request.POST['summer_min_line'],
+            request.POST['summer_max_line'])
+        
+        s_date = select_year + '/6/1'
+        e_date = select_year + '/8/31'
+    elif select_season == 'winter':
+        line_low, line_high = setLineHighLow(
+            request.POST['winter_min_line'],
+            request.POST['winter_max_line'])
+        
+        s_date = select_year + '/12/01'
+        e_date = str(int(select_year) + 1) + '/2/28' #TODO: うるう年の判定
+        
     #地域名
-    region_= 'shinyoko'
+    region_= 'shinyoko' #TODO: 地域名から地域ID的なものを取得
     
     #読み込みファイル指定　既存のもの
     data_base = pd.read_sql_query("SELECT user_id, date, hour, minute, total from %s_data where date between '%s' and '%s'"%(region_,s_date,e_date),cnt)
-    #data_base = pd.read_csv('shinyoko(20140803-20181130).csv')
     data_base = data_base.sort_index()
     #年　抽出
     data_base['year']=data_base['date'].astype(str).str[:4]    #data_baseに追加 
     #月　抽出
     data_base['month']=data_base['date'].astype(str).str[5:7]  #data_baseに追加
     data_base['date1'] = pd.to_datetime(data_base['date'])
-    #CSV　出力
-    data_base.to_csv('data_%s-%s.csv'%(date1_base,date2_base),index=False)
     
     #年の要素数　地域名
     data_year = data_base['date'].astype(str).str[:4]
     region = '新横浜'
-    
-    ##年間
-    #クラス分け
-    line_low = 5000
-    line_high = 10000
-    
+
     #画像取得
-    distribution, histogram = class_glaph(2015)
+    distribution, histogram = class_glaph(select_year)
     
     params = {
         'distribution' : "data:image/png;base64," + distribution,
@@ -181,3 +190,13 @@ def analysis_demand_class(request):
     
     #グラフをbase64形式で取得
     return render(request, 'app/jyuyou_class.html', params)
+
+def setLineHighLow(min_line, max_line):
+    line_low = None
+    line_high = None
+    
+    if min_line and max_line :
+        line_low = int(min_line)
+        line_high = int(max_line)
+    
+    return line_low, line_high
