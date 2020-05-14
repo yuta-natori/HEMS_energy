@@ -10,7 +10,7 @@ import os
 from app.form.index_form import TemperatureForm
 from app.form.index_form import ElectricPowerForm
 from app.form.index_form import HolidayForm
-from app.models.index_models import HolidayData
+from app.models.holiday_data import HolidayData
 
 def init():
     params = {

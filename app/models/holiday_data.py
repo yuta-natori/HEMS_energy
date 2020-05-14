@@ -8,4 +8,3 @@ class HolidayData(models.Model):
     
     class Meta:
         db_table = 'm_holiday_data'
-
