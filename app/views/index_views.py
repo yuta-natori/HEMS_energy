@@ -1,17 +1,17 @@
 from django.shortcuts import render
-import sqlalchemy as sqa 
 import jpholiday
 import numpy as np
 from datetime import datetime
 from datetime import timedelta
 import pandas as pd
-import mysql.connector
 import os
 from app.form.index_form import TemperatureForm
 from app.form.index_form import ElectricPowerForm
 from app.form.index_form import HolidayForm
 from app.models.holiday_data import HolidayData
 from app.models.temp_data import TempData
+from app.models.electricity_data import ElectricityData
+
 
 
 def init():
@@ -110,28 +110,32 @@ def electric_power(request):
     
         ##Path指定
         os.chdir("C:\\Users\\ClientAdmin\\Desktop\\受領\\受領\\HEMS_Analysis_demo")
-    
-        ##地域指定
-        region = 'shinyoko'
-        #def main():
-            # MySQL接続
-        cnt = mysql.connector.connect(
-              host='192.168.56.1', # 接続先
-              port='3306',
-              user='user', # mysqlのuser
-              password='pass', # mysqlのpassword
-              database='hems_data_shinyoko',
-              charset='utf8',
-              auth_plugin='mysql_native_password'
-              )
         
-        # カーソル取得
-        cnt.cursor(buffered=True)
-            
-        url = 'mysql://user:pass@192.168.56.1/hems_data_shinyoko?charset=utf8'
-        sqa.create_engine(url, echo=True)
         data = pd.read_csv(electricFile) 
-        data.to_sql('%s_data'%region, url, index=None,if_exists = 'replace')
+        data['area'] = electricFile[-6:-4]
+        
+        evens = [] 
+        for row in data.itertuples(): 
+            evens.append(ElectricityData(
+                    household_id=row[2],
+                    date=pd.to_datetime(row[3]).strftime("%Y/%m/%d"),
+                    hour=row[4],
+                    minute=row[5],
+                    total=row[6],
+                    val1=row[7],
+                    val2=row[8],
+                    val3=row[9],
+                    val4=row[10],
+                    val5=row[11],
+                    val6=row[12],
+                    val7=row[13],
+                    val8=row[14],
+                    val9=row[15],
+                    val10=row[16],
+                    area=row[17]))
+            
+        #evens[]リストをDBに登録        
+        ElectricityData.objects.bulk_create(evens)
         
         params = init()
         params['electricPower'] = ElectricPowerForm(request.POST)

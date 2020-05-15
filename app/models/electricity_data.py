@@ -4,7 +4,7 @@ from django.db import models
 
 class ElectricityData(models.Model):
     area = models.CharField(max_length=10)
-    household_id = models.CharField(max_length=10)
+    household_id = models.CharField(max_length=20)
     date = models.CharField(max_length=10)
     hour = models.BigIntegerField()
     minute = models.BigIntegerField()
