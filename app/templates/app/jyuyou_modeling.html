@@ -7,6 +7,7 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 		<link rel="stylesheet" type="text/css" href="{% static 'css/jyuyou_modeling.css' %}">
+		<script type="text/javascript" src="{% static 'js/jyuyou_modeling.js' %}"></script>
 		<script src="https://kit.fontawesome.com/d995c7ddf7.js" crossorigin="anonymous"></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 		<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.min.js"></script>
@@ -16,14 +17,14 @@
 		
 		<script type="text/javascript">
 		$(function(){
-			var from = $("#from").datepicker({
+			var from = $("#id_fromScreening").datepicker({
 					onSelect: function(selectedDate) {
-					$("#to").datepicker("option","minDate",selectegDate);
+					$("#id_toScreening").datepicker("option","minDate",selectegDate);
 				}
 			});
-				var to =$("#to").datepicker({
+				var to =$("#id_toScreening").datepicker({
 					onSelect: function(selectedDate){
-					$("#from").datepicker("option","maxDate",selectedDate);
+					$("#id_fromScreening").datepicker("option","maxDate",selectedDate);
 				}
 			});
 			});
@@ -37,15 +38,11 @@
 
 	 </head>
 	 <body>
-
 		<div class="main">
-		
 			<div class="menu">
 				<input type="checkbox"  id="toggle">
 				<label for="toggle"><span class="fas fa-bars fa-2x"></span></label>
-				
 					<div class="link">
-					
 						<ul class="fa-ul">
 							<li><a href="/"><i class="fas fa-file-upload fa-li"></i>分析データ作成</a></li>
 							<li><a href="toukei_keisan"><i class="fas fa-calculator fa-li"></i>基本統計量の計算</a></li>
@@ -55,145 +52,89 @@
 							<li><a href="chouki_yosoku"><i class="fas fa-chart-area fa-li"></i>長期需要予測</a></li>
 							<li><a href="tanki_yosoku"><i class="fas fa-chart-area fa-li"></i>短期需要予測</a></li>
 						</ul>
-					
-					</div>
-					
+					</div>	
 			</div>
-			
-				<div class="jyuyou_class">
-					<h2><i class="fab fa-think-peaks fa-fw"></i>需要モデリング</h2>
-					
-					<div class="input">
-						<div class="jyuyou_inner">
-							<p>■使用データの指定</p>
-							<p class="db_select_data"><select name="data" required>
-							<option value="">-</option>
-							<option value="DBデータから選択1">DBデータから選択1</option>
-							<option value="DBデータから選択2">DBデータから選択2</option>
-							</select>
-						</div>
-						
-						<div class="kion_inner">
-							<p>■気温データの指定</p>
-							<p class="db_select_data"><select name="data" required>
-							<option value="">-</option>
-							<option value="DBデータから選択1">DBデータから選択1</option>
-							<option value="DBデータから選択2">DBデータから選択2</option>
-							</select>
-						</div>
+			<div class="jyuyou_class">
+				<h2><i class="fab fa-think-peaks fa-fw"></i>需要モデリング</h2>
+				<div class="input">
+					<form action="{% url 'app:demand_modeling' %}" method="post">	
+    					{% csrf_token %}
 						
 						<div class="chiiki">
 							<p>■地域の指定</p>
-							<p class="chiiki_select"><input type="text" required></p>
+							<p class="chiiki_select">{{ form.area }}</p>
 						</div>
 						
 						<div class="kikan_select">
 							<p>■スクリーニング期間の選択</p>
-							<p class="yyyymmdd"><input type="text" id="from"/>から</p>
-							<p class="yyyymmdd"><input type="text" id="to"/>まで</p>
+							<p class="yyyymmdd">{{ form.fromScreening }}から</p>
+							<p class="yyyymmdd">{{ form.toScreening }}まで</p>
 						</div>
 						
 						<div class="number_input">
 							<p>■除外値の指定</p>
-							<p class="form_number"><input type="number"></p>
+							<p class="form_number">{{ form.excValue }}</p>
 						</div>
 						
 						<div class="normal_number_input">
 							<p>■ノーマライズ上限値の指定</p>
-							<p class="form_number"><input type="number"></p>
+							<p class="form_number">{{ form.normalizeMax }}</p>
 							<p>■ノーマライズ下限値の指定</p>
-							<p class="form_number"><input type="number"></p>
+							<p class="form_number">{{ form.normalizeMin }}</p>
 						</div>
 						
 						<div class="submit_buttom">
 							<p class="submit"><input type="submit" value="実行"></p>
 						</div>
-					</div>
-					
-					<div class="cp_tab">
-					
-						<ul>
-							<li><a href="#">休日変動係数ヒストグラム</a></li>
-							
-							<li><a href="#">電力需要プロファイル</a>
-								<ul>
-									<li><a href="#">1月</a></li>
-									<li><a href="#">2月</a></li>
-									<li><a href="#">3月</a></li>
-									<li><a href="#">4月</a></li>
-									<li><a href="#">5月</a></li>
-									<li><a href="#">6月</a></li>
-									<li><a href="#">7月</a></li>
-									<li><a href="#">8月</a></li>
-									<li><a href="#">9月</a></li>
-									<li><a href="#">10月</a></li>
-									<li><a href="#">11月</a></li>
-									<li><a href="#">12月</a></li>
-								</ul>
-							</li>
-									
-							<li><a href="#">平均気温と正規需要</a></li>
-									
-						</ul>
-						
-					</div>
-		
-						<!--<input type="radio" name="cp_tab" id="tab1_1" aria-controls="first_tab01" checked>
-						<label for="tab1_1">休日変動係数ヒストグラム</label>
-						
-						<input type="radio" name="cp_tab" id="tab1_2" aria-controls="second_tab01">
-						<label for="tab1_2">電力需要プロファイル ▽</label>
-							<ul class="sub_menu">
-								<li><a href="#">1月</a></li>
-								<li><a href="#">2月</a></li>
-								<li><a href="#">3月</a></li>
-								<li><a href="#">4月</a></li>
-								<li><a href="#">5月</a></li>
-								<li><a href="#">6月</a></li>
-								<li><a href="#">7月</a></li>
-								<li><a href="#">8月</a></li>
-								<li><a href="#">9月</a></li>
-								<li><a href="#">10月</a></li>
-								<li><a href="#">11月</a></li>
-								<li><a href="#">12月</a></li>
-							</ul>
-						
-						<input type="radio" name="cp_tab" id="tab1_3" aria-controls="third_tab01">
-						<label for="tab1_3">平均気温と正規需要</label>
-											
-					<div class="cp_tabpanels">
-					
-						<div id="first_tab01" class="cp_tabpanel">
-							<p>First Tab text</p>
-						</div>
-						
-						<div id="second_tab01" class="cp_tabpanel">
-							<select name="month">
-							<option value="1">1</option>
-							<option value="2">2</option>
-							<option value="3">3</option>
-							<option value="4">4</option>
-							<option value="5">5</option>
-							<option value="6">6</option>
-							<option value="7">7</option>
-							<option value="8">8</option>
-							<option value="9">9</option>
-							<option value="10">10</option>
-							<option value="11">11</option>
-							<option value="12">12</option>
-							</select>　月
-						</div>
-						
-						<div id="third_tab01" class="cp_tabpanel">
-							<p>third tab text</p>
-						</div>
+					</form>
+				</div>
 				
-					</div>--->
-		
-				</div>
-					
-				</div>
-							
+				<div class="modeling_result">
+     				<div class="cp_tab">
+     					<ul class="demand_modeling_tab">
+     						<li><a href="#" onclick="clickHistogram()">休日変動係数ヒストグラム</a></li>
+     						<li><a href="#">電力需要プロファイル</a>
+         						<ul>
+     								<li><a href="#" onclick="clickProfiles(1)">1月</a></li>
+     								<li><a href="#" onclick="clickProfiles(2)">2月</a></li>
+     								<li><a href="#" onclick="clickProfiles(3)">3月</a></li>
+     								<li><a href="#" onclick="clickProfiles(4)">4月</a></li>
+     								<li><a href="#" onclick="clickProfiles(5)">5月</a></li>
+     								<li><a href="#" onclick="clickProfiles(6)">6月</a></li>
+     								<li><a href="#" onclick="clickProfiles(7)">7月</a></li>
+     								<li><a href="#" onclick="clickProfiles(8)">8月</a></li>
+     								<li><a href="#" onclick="clickProfiles(9)">9月</a></li>
+     								<li><a href="#" onclick="clickProfiles(10)">10月</a></li>
+     								<li><a href="#" onclick="clickProfiles(11)">11月</a></li>
+     								<li><a href="#" onclick="clickProfiles(12)">12月</a></li>
+     							</ul>
+     						</li>		
+     						<li><a href="#" onclick="clickNormarized()">平均気温と正規需要</a></li>		
+     					</ul>
+     				</div>
+     				<div class="demand_modeling_imgs">
+         				{% if histogram %}
+       					<div id="histogram_img">
+                             <img src={{histogram}} />
+       					</div>
+           				{% endif %}
+           				
+           				{% if profiles %}
+           				{% for profile in profiles%}
+       					<div id="profile_img_{{ forloop.counter }}" class="profile_img">
+                             <img src={{profile}} />
+       					</div>
+           				{% endfor %}
+           				{% endif %}
+           				
+           				{% if normarized %}
+       					<div id="normarized_img">
+                             <img src={{normarized}} />
+       					</div>
+           				{% endif %}
+     				</div>
+     			</div>
+ 			</div>
 		</div>
 		<!-- jQuery first, then Tether, then Bootstrap JS. -->
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>

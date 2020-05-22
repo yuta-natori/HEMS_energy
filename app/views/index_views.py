@@ -12,9 +12,8 @@ from app.models.holiday_data import HolidayData
 from app.models.temp_data import TempData
 from app.models.electricity_data import ElectricityData
 
-
-
 from app.form.demand_class_form import DemandClassForm
+from app.form.demand_modeling_form import DemandModelingForm
 
 def init():
     params = {
@@ -158,7 +157,10 @@ def jyuyou_trend(request):
 	return render(request, 'app/jyuyou_trend.html',{})
 
 def jyuyou_modeling(request):
-	return render(request, 'app/jyuyou_modeling.html',{})
+    params = {
+        'form': DemandModelingForm()
+    }
+    return render(request, 'app/jyuyou_modeling.html',params)
 
 def chouki_yosoku(request):
 	return render(request, 'app/chouki_yosoku.html',{})	

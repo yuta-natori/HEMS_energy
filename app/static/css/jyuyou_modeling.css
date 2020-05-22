@@ -276,3 +276,27 @@ body {
 	-o-transition: 0.5s;
 	transition: 0.5s;
 }
+
+.demand_modeling_tab {
+    position: absolute;
+}
+
+.demand_modeling_imgs {
+    padding-top: 2%;
+}
+
+.modeling_result {
+    display: flex;
+}
+
+#distribution_img {
+    display : block;
+}
+
+.profile_img {
+    display : none;
+}
+
+#histogram_img {
+    display : none;
+}
