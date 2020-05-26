@@ -289,8 +289,8 @@ body {
     display: flex;
 }
 
-#distribution_img {
-    display : block;
+#normarized_img {
+    display : none;
 }
 
 .profile_img {
@@ -298,5 +298,5 @@ body {
 }
 
 #histogram_img {
-    display : none;
+    display : block;
 }

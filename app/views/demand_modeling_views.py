@@ -16,10 +16,13 @@ from io import BytesIO
 import base64
 #form
 from app.form.demand_modeling_form import DemandModelingForm
+#model
+from app.models.holiday_data import HolidayData
+from app.models.electricity_data import ElectricityData
 
 def demand_modeling(request) : 
     os.chdir("C:\\Users\\ClientAdmin\\Desktop\\test")      #フォイルを作成したい場所を指定
-    region_ = 'shinyoko'   #ファイル名に指定している地域名 regionと同じ場合は編集後、削除可
+    region = request.POST['area']   #ファイル名に指定している地域名
     #sql書き込み
     cnt = mysql.connector.connect(
           host='192.168.11.8', # 接続先
@@ -39,22 +42,20 @@ def demand_modeling(request) :
     
     
     # サンプルデータを読み込む 
-    data_base = pd.read_sql_query("SELECT * from %s_data"%region_,cnt)
+    data_base = pd.DataFrame(list(ElectricityData.objects.all().values()))
+    #data_base = pd.read_sql_query("SELECT * from %s_data"%region,cnt)
     data_base = data_base.sort_index()
     data_base['year'] = data_base['date'].astype(str).str[:4]
     data_base['month'] = data_base['date'].astype(str).str[5:7]
     
     #期間指定
-    date1_base = '2017/01/01'
-    #date2_base = '2018/11/30'
-    date2_base = '2017/12/31'
+    date1_base = request.POST['fromScreening']
+    date2_base = request.POST['toScreening']
     
     data_base['date1'] = pd.to_datetime(data_base['date'])
     data = data_base.query("date1 >= '%s' & date1 <= '%s'"%(date1_base,date2_base))
     data['date'] = data['date'].astype(str).str[:4]+'/'+data['date'].astype(str).str[5:7]+'/'+data['date'].astype(str).str[8:10]
-    region = '新横浜'
-    
-    
+      
     holiday = pd.read_sql_query("SELECT * from m_holiday_data",cnt)
     #csv出力 
     holiday.to_csv("holiday.csv", index=True)      
@@ -70,7 +71,7 @@ def demand_modeling(request) :
     
     #カテゴリわけしてグループ集計 
     #各ユーザー日毎の1時間平均算出 
-    user_daily = data_base.groupby(['user_id','date']).agg({'total':'mean'}) 
+    user_daily = data_base.groupby(['household_id','date']).agg({'total':'mean'}) 
     
     #列ラベル変更
     user_daily = user_daily.rename(columns = {'total':'hourly_mean'}) 
@@ -133,7 +134,7 @@ def demand_modeling(request) :
     plt.text(1.5,10.05, 
              "(%s.%s-%s.%sデータ)"%(daily_.date.min()[:4],daily_.date.min()[5:7],
                                daily_.date.max()[:4],daily_.date.max()[5:7]),size = 9,color='black')
-    #plt.show()
+
     #グラフをバイナリ変換
     histogram_img = makeImageBinary(fig)
     
@@ -143,7 +144,7 @@ def demand_modeling(request) :
                              "day": data_base['date'].astype(str).str[8:10]})
     
     
-    user_month_hour_ = data_base[['user_id','total','hour']]
+    user_month_hour_ = data_base[['household_id','total','hour']]
     
     #連結 
     user_month_hour = pd.concat([user_month_hour_,data_base_umh], axis=1)
@@ -159,8 +160,6 @@ def demand_modeling(request) :
         profile_imgs.append("data:image/png;base64," + daily_demand(i+1, region, url, user_month_hour))
     
     #気温データ読み込み
-    
-    
     temperature = pd.read_sql_query("select * from shinyoko_temp where  date between '%s' and '%s';"%(date1_base ,date2_base), cnt)
     #temperature = temperature.reset_index(drop=True) #index番号ふり直し→DBから抽出したらindex変わるのか
     temperature['date1'] = pd.to_datetime(temperature['date'])
@@ -178,7 +177,7 @@ def demand_modeling(request) :
     holiday_coef = holiday_coef.rename(columns={'index': 'is_holiday'})
     holiday_coef = holiday_coef.astype(float)
     
-    holiday_coef.to_sql('holiday_coefficient_%s'%region_, url, index=None,if_exists = 'replace')
+    holiday_coef.to_sql('holiday_coefficient_%s'%region, url, index=None,if_exists = 'replace')
     
     user_daily_with_temp = pd.merge(user_daily_with_temp,holiday_coef, on = 'is_holiday')
     
@@ -186,19 +185,23 @@ def demand_modeling(request) :
     user_daily_with_temp['normalized'] = user_daily_with_temp['hourly_mean']/user_daily_with_temp['holiday_coef']*24 
     
     #ユーザーごとの平均値→ユーザー毎の元データの範囲(今回は一年間)の休日補正済みの平均消費電力
-    user_daily_average_normalized = user_daily_with_temp.groupby(['user_id'], as_index=False).agg({'normalized':'mean'})
+    user_daily_average_normalized = user_daily_with_temp.groupby(['household_id'], as_index=False).agg({'normalized':'mean'})
     
     #平均値の結合
-    user_daily_with_temp = pd.merge(user_daily_with_temp,user_daily_average_normalized,on = 'user_id')
+    user_daily_with_temp = pd.merge(user_daily_with_temp,user_daily_average_normalized,on = 'household_id')
     
     #ノーマライズ→日の一時間毎の休日係数をかけた平均消費電量をユーザーごとの休日係数でかけた平均消費電量で割った 間違っているかも...
     user_daily_with_temp['normalized2'] = user_daily_with_temp['normalized_x']/user_daily_with_temp['normalized_y']
     
+    #ノーマライズ上限・下限値を取得
+    upper_limit = request.POST['normalizeMax']
+    lower_limit = request.POST['normalizeMin']
+    
     #フィルター→0<normalized2<5だけど　0<narmalized2<3 でもいいかもしれない
-    user_daily_with_temp_filtered = user_daily_with_temp.query("normalized2 > 0 & normalized2 < 5")
+    user_daily_with_temp_filtered = user_daily_with_temp.query("normalized2 > " + lower_limit + " & normalized2 < " + upper_limit)
     
     #フィルタで除去された件数
-    remove_3 = user_daily_with_temp.query("normalized2 <= 0 or normalized2 > 5")
+    remove_3 = user_daily_with_temp.query("normalized2 <= " + lower_limit + " or normalized2 > " + upper_limit)
     
     #日ごとに平均
     daily_with_temp = user_daily_with_temp_filtered.groupby(['date'],as_index=False).agg({'normalized2':'mean'})
@@ -209,17 +212,17 @@ def demand_modeling(request) :
 
     #スクリーニングしたデータをcsvに出力
     #スクリーニングしたデータフレームを作成
-    data_scr = user_daily_with_temp_filtered[['user_id','date']] #列指定
+    data_scr = user_daily_with_temp_filtered[['household_id','date']] #列指定
     data_scr = data_scr.drop_duplicates()                        #重複削除
-    data_scr = pd.merge(data_scr,data.query("total<10"),on=('user_id','date'))  #クラス別分析で作成されたdata
-    data_scr = data_scr.sort_values(['date', 'hour','user_id'])
+    data_scr = pd.merge(data_scr,data.query("total<10"),on=('household_id','date'))  #クラス別分析で作成されたdata
+    data_scr = data_scr.sort_values(['date', 'hour','household_id'])
     data_scr = data_scr.iloc[:, 0:15]
     
     
     #除去件数の算出
     remove_2['date'] = remove_2['year']+'/'+remove_2['month']+'/'+remove_2['day']
-    remove_23 = pd.merge(remove_2,remove_3,on=('user_id','date'),how='outer')
-    remove = remove_1 + len(remove_23['user_id'])
+    remove_23 = pd.merge(remove_2,remove_3,on=('household_id','date'),how='outer')
+    remove = remove_1 + len(remove_23['household_id'])
     #↓3行足した　実行してない
     data_scr['remove']  = np.nan
     data_scr['remove'][0] = remove
@@ -254,10 +257,7 @@ def daily_demand(month, region, url, user_month_hour):
     plt.xticks(fontsize = 12)
     plt.yticks(fontsize = 12,rotation=90) 
 
-    
     plt.plot(tmp['hour'], tmp['rate'], linewidth=1, color="black")
-    #plt.show()
-    
     tmp.to_sql('power_demand_profile_%s_%s'%(region,month), url, index=None,if_exists = 'replace')
 
     return makeImageBinary(fig)
@@ -282,7 +282,7 @@ def modering(region, url, daily_with_temp):
     plt.xticks(np.arange(0,daily_with_temp['temperature'].max(),5),fontsize = 12)
     #plt.ylim(0, dt['total'].max()+1000)
     plt.yticks(fontsize = 12,rotation=90)
-    plt.tick_params(length = 3) #仮
+    plt.tick_params(length = 3) 
     
 
     #線形回帰　暖房
@@ -322,8 +322,6 @@ def modering(region, url, daily_with_temp):
     lm_c.to_sql('cooling_temperature_variation_coefficient_%s'%region, url, index=None,if_exists = 'replace')
     average_no_aircon.to_sql('no_aircon_temperature_variation_coefficient_%s'%region, url, index=None,if_exists = 'replace')
     
-    #plt.show()
-    #
     return makeImageBinary(fig)
     
 def makeImageBinary(fig):
