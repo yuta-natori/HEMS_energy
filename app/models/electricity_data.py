@@ -8,7 +8,7 @@ class ElectricityData(models.Model):
     date = models.CharField(max_length=10)
     hour = models.BigIntegerField()
     minute = models.BigIntegerField()
-    total = models.FloatField()
+    total = models.FloatField(null=True)
     val1 = models.CharField(max_length=10, null=True)
     val2 = models.CharField(max_length=10, null=True)
     val3 = models.CharField(max_length=10, null=True)
