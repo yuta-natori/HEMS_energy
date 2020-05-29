@@ -4,10 +4,7 @@ import os
 #os.chdir("C:\\Users\\ClientAdmin\\Desktop\\test")      #フォイルを作成したい場所を指定
 import pandas as pd
 import numpy as np
-import sqlalchemy as sqa     
-import mysql.connector
 import matplotlib.pyplot as plt 
-from datetime import datetime as dt
 from matplotlib import rcParams
 from sklearn.linear_model import LinearRegression
 #↓グラフ表示するために追加したライブラリ
@@ -19,31 +16,21 @@ from app.form.demand_modeling_form import DemandModelingForm
 #model
 from app.models.holiday_data import HolidayData
 from app.models.electricity_data import ElectricityData
+from app.models.temp_data import TempData
+from app.models.holiday_coefficient import HolidayCoefficient
+from app.models.energy_data_after_screening import EnergyDataAfterScreening
+from app.models.power_demand_profile import PowerDemandProfile
+from app.models.temperature_variation_coefficient import TemperatureVariationCoefficient
 
 def demand_modeling(request) : 
     os.chdir("C:\\Users\\ClientAdmin\\Desktop\\test")      #フォイルを作成したい場所を指定
     region = request.POST['area']   #ファイル名に指定している地域名
     #sql書き込み
-    cnt = mysql.connector.connect(
-          host='192.168.11.8', # 接続先
-          port='3306',
-          user='user', # mysqlのuser
-          password='pass', # mysqlのpassword
-          database='hems_data_shinyoko',
-          charset='utf8' 
-          )
-    cursor=cnt.cursor()
-     
-    # カーソル取得
-    cursor = cnt.cursor(buffered=True)    
+
     url = 'mysql+pymysql://user:pass@192.168.11.8/hems_data_shinyoko?charset=utf8'
-    engine = sqa.create_engine(url, echo=True)
-    #holiday.to_sql('holiday', url, index=None,if_exists = 'replace')
-    
     
     # サンプルデータを読み込む 
     data_base = pd.DataFrame(list(ElectricityData.objects.all().values()))
-    #data_base = pd.read_sql_query("SELECT * from %s_data"%region,cnt)
     data_base = data_base.sort_index()
     data_base['year'] = data_base['date'].astype(str).str[:4]
     data_base['month'] = data_base['date'].astype(str).str[5:7]
@@ -56,7 +43,7 @@ def demand_modeling(request) :
     data = data_base.query("date1 >= '%s' & date1 <= '%s'"%(date1_base,date2_base))
     data['date'] = data['date'].astype(str).str[:4]+'/'+data['date'].astype(str).str[5:7]+'/'+data['date'].astype(str).str[8:10]
       
-    holiday = pd.read_sql_query("SELECT * from m_holiday_data",cnt)
+    holiday = pd.DataFrame(list(HolidayData.objects.all().values()))
     #csv出力 
     holiday.to_csv("holiday.csv", index=True)      
     
@@ -154,16 +141,19 @@ def demand_modeling(request) :
     user_month_hour = user_month_hour.query('total < 10')
     user_month_hour['month'] = user_month_hour['month'].astype(int)  #月を数値に変換
     
-    profile_imgs = []
+    #日時係数データ洗替
+    PowerDemandProfile.objects.all().delete()
     
+    profile_imgs = []
     for i in range(12):
         profile_imgs.append("data:image/png;base64," + daily_demand(i+1, region, url, user_month_hour))
     
     #気温データ読み込み
-    temperature = pd.read_sql_query("select * from shinyoko_temp where  date between '%s' and '%s';"%(date1_base ,date2_base), cnt)
-    #temperature = temperature.reset_index(drop=True) #index番号ふり直し→DBから抽出したらindex変わるのか
+    temperature = pd.DataFrame(list(TempData.objects.filter(
+        date__range = (date1_base, date2_base)
+        ).values()))
     temperature['date1'] = pd.to_datetime(temperature['date'])
-    temperature = temperature[['date','temperature','date1','month']]
+    temperature = temperature[['date','temperature','date1']]
     
     #data2に休日データ，気温データを結合する
     user_daily_with_temp = pd.merge(user_daily,holiday,on='date')
@@ -177,7 +167,15 @@ def demand_modeling(request) :
     holiday_coef = holiday_coef.rename(columns={'index': 'is_holiday'})
     holiday_coef = holiday_coef.astype(float)
     
-    holiday_coef.to_sql('holiday_coefficient_%s'%region, url, index=None,if_exists = 'replace')
+    #休日係数登録
+    holiday_coef_data = [] 
+    for row in holiday_coef.itertuples():
+        holiday_coef_data.append(HolidayCoefficient(
+            is_holiday=row[1],
+            holiday_coef=row[2]))
+        
+    HolidayCoefficient.objects.all().delete()
+    HolidayCoefficient.objects.bulk_create(holiday_coef_data)
     
     user_daily_with_temp = pd.merge(user_daily_with_temp,holiday_coef, on = 'is_holiday')
     
@@ -216,7 +214,7 @@ def demand_modeling(request) :
     data_scr = data_scr.drop_duplicates()                        #重複削除
     data_scr = pd.merge(data_scr,data.query("total<10"),on=('household_id','date'))  #クラス別分析で作成されたdata
     data_scr = data_scr.sort_values(['date', 'hour','household_id'])
-    data_scr = data_scr.iloc[:, 0:15]
+    #data_scr = data_scr.iloc[:, 0:15]
     
     
     #除去件数の算出
@@ -227,7 +225,52 @@ def demand_modeling(request) :
     data_scr['remove']  = np.nan
     data_scr['remove'][0] = remove
     data_scr['remove'] = data_scr['remove'].replace(np.nan,' ', regex=True)
-    data_scr.to_sql('energy_data_after_screening', url, index=None,if_exists = 'replace')
+    """
+    energy_data = [] 
+    for row in data_scr.itertuples():
+        energy_data.append(EnergyDataAfterScreening(
+            id=row[3],
+            household_id=row[1],
+            date=pd.to_datetime(row[2]).strftime("%Y/%m/%d"),
+            hour=row[3],
+            minute=row[4],
+            total=row[5],
+            val1=row[6],
+            val2=row[7],
+            val3=row[8],
+            val4=row[9],
+            val5=row[10],
+            val6=row[11],
+            val7=row[12],
+            val8=row[13],
+            val9=row[14],
+            val10=row[15]))
+    """
+    EnergyDataAfterScreening.objects.all().delete()
+    regist_data = data_scr.drop(['id', 'area', 'year', 'month', 'date1', 'remove'], axis=1)
+    
+    energy_data = [] 
+    for row in regist_data.itertuples():
+        energy_data.append(EnergyDataAfterScreening(
+            id=row[3],
+            household_id=row[1],
+            date=pd.to_datetime(row[2]).strftime("%Y/%m/%d"),
+            hour=row[3],
+            minute=row[4],
+            total=row[5],
+            val1=row[6],
+            val2=row[7],
+            val3=row[8],
+            val4=row[9],
+            val5=row[10],
+            val6=row[11],
+            val7=row[12],
+            val8=row[13],
+            val9=row[14],
+            val10=row[15]))
+        
+    EnergyDataAfterScreening.objects.bulk_create(energy_data)
+    #regist_data.to_sql('t_energy_data_after_screening', url, index=None,if_exists = 'replace')
     
     params = {
         'histogram' : "data:image/png;base64," + histogram_img,
@@ -258,7 +301,16 @@ def daily_demand(month, region, url, user_month_hour):
     plt.yticks(fontsize = 12,rotation=90) 
 
     plt.plot(tmp['hour'], tmp['rate'], linewidth=1, color="black")
-    tmp.to_sql('power_demand_profile_%s_%s'%(region,month), url, index=None,if_exists = 'replace')
+    
+    power_demand_profile_data = [] 
+    for row in tmp.itertuples():
+        power_demand_profile_data.append(PowerDemandProfile(
+            month=row[1],
+            hour=row[2],
+            total=row[3],
+            rate=row[4]))
+    
+    PowerDemandProfile.objects.bulk_create(power_demand_profile_data)
 
     return makeImageBinary(fig)
 
@@ -266,7 +318,8 @@ def daily_demand(month, region, url, user_month_hour):
 ##気温需要モデリングプロット
 def modering(region, url, daily_with_temp):
     global lm_w,lm_c,average_no_aircon
-    
+    #登録用リスト
+    temp_coefficient_data = []     
     fig = plt.figure(figsize = (7,5)) 
     
     #散布図　値指定
@@ -280,7 +333,6 @@ def modering(region, url, daily_with_temp):
     #軸目盛　間隔　
     plt.xlim(daily_with_temp['temperature'].min()-1,daily_with_temp['temperature'].max()+1)
     plt.xticks(np.arange(0,daily_with_temp['temperature'].max(),5),fontsize = 12)
-    #plt.ylim(0, dt['total'].max()+1000)
     plt.yticks(fontsize = 12,rotation=90)
     plt.tick_params(length = 3) 
     
@@ -293,8 +345,17 @@ def modering(region, url, daily_with_temp):
     Y = daily_with_temp.lm_w['normalized2'].values         # 目的変数（Numpyの配列）
     
     lr.fit(X,Y)                         # 線形モデルの重みを学習
-
-    lm_w = pd.Series([lr.intercept_,lr.coef_[0]])
+    
+    lm_w = pd.DataFrame({
+        'status': [1], 
+        'intercept': [lr.intercept_], 
+        'coefficient': [lr.coef_[0]]})
+    
+    temp_coefficient_data.append(TemperatureVariationCoefficient(
+            status=1,
+            coefficient=lr.intercept_,
+            intercept=lr.coef_[0]))
+    
     #回帰直線
     plt.plot(X, lr.predict(X) , color = 'darkblue',linewidth = 1)
     #線形回帰　冷房
@@ -304,7 +365,15 @@ def modering(region, url, daily_with_temp):
         
     lr.fit(X,Y)                         # 線形モデルの重みを学習
 
-    lm_c = pd.Series([lr.intercept_,lr.coef_[0]])
+    lm_c = pd.DataFrame({
+        'status': [2], 
+        'intercept': [lr.intercept_], 
+        'coefficient': [lr.coef_[0]]})
+    
+    temp_coefficient_data.append(TemperatureVariationCoefficient(
+            status=2,
+            coefficient=lr.intercept_,
+            intercept=lr.coef_[0]))
 
     #回帰直線
     plt.plot(X, lr.predict(X), color = 'red',linewidth = 1)
@@ -317,10 +386,13 @@ def modering(region, url, daily_with_temp):
              "(%s.%s-%s.%sデータ)"%(daily_with_temp.date.min()[:4],daily_with_temp.date.min()[5:7],
                                    daily_with_temp.date.max()[:4],daily_with_temp.date.max()[5:7]),size = 10,color='black')
 
+    temp_coefficient_data.append(TemperatureVariationCoefficient(
+            status=0,
+            coefficient=average_no_aircon['normalized2']))   
+        
     #期間表示
-    lm_w.to_sql('heating_temperature_variation_coefficient_%s'%region, url, index=None,if_exists = 'replace')
-    lm_c.to_sql('cooling_temperature_variation_coefficient_%s'%region, url, index=None,if_exists = 'replace')
-    average_no_aircon.to_sql('no_aircon_temperature_variation_coefficient_%s'%region, url, index=None,if_exists = 'replace')
+    TemperatureVariationCoefficient.objects.all().delete()
+    TemperatureVariationCoefficient.objects.bulk_create(temp_coefficient_data)
     
     return makeImageBinary(fig)
     
