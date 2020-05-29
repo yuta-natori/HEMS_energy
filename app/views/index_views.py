@@ -23,6 +23,12 @@ def init():
                 }
     return params
 
+def checkNa(value):
+    if value == "NA":
+        return None
+    else:
+        return value
+
 def index(request):
     if request.method == 'GET':
         params = init()
@@ -122,17 +128,17 @@ def electric_power(request):
                     date=pd.to_datetime(row[3]).strftime("%Y/%m/%d"),
                     hour=row[4],
                     minute=row[5],
-                    total=row[6],
-                    val1=row[7],
-                    val2=row[8],
-                    val3=row[9],
-                    val4=row[10],
-                    val5=row[11],
-                    val6=row[12],
-                    val7=row[13],
-                    val8=row[14],
-                    val9=row[15],
-                    val10=row[16],
+                    total=checkNa(row[6]),
+                    val1=checkNa(row[7]),
+                    val2=checkNa(row[8]),
+                    val3=checkNa(row[9]),
+                    val4=checkNa(row[10]),
+                    val5=checkNa(row[11]),
+                    val6=checkNa(row[12]),
+                    val7=checkNa(row[13]),
+                    val8=checkNa(row[14]),
+                    val9=checkNa(row[15]),
+                    val10=checkNa(row[16]),
                     area=row[17]))
             
         #evens[]リストをDBに登録        
