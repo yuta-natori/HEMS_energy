@@ -80,7 +80,7 @@ DATABASES = {
         'NAME': 'hems_data', #　作成したデータベース名
         'USER': 'user', # ログインユーザー名
         'PASSWORD': 'pass', 
-        'HOST': '192.168.11.10',
+        'HOST': '192.168.1.156',
         'PORT': '3306',
         'OPTIONS': {
                 'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
