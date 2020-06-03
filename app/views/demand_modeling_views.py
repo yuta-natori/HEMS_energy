@@ -214,7 +214,6 @@ def demand_modeling(request) :
     data_scr = data_scr.drop_duplicates()                        #重複削除
     data_scr = pd.merge(data_scr,data.query("total<10"),on=('household_id','date'))  #クラス別分析で作成されたdata
     data_scr = data_scr.sort_values(['date', 'hour','household_id'])
-    #data_scr = data_scr.iloc[:, 0:15]
     
     
     #除去件数の算出
@@ -225,34 +224,13 @@ def demand_modeling(request) :
     data_scr['remove']  = np.nan
     data_scr['remove'][0] = remove
     data_scr['remove'] = data_scr['remove'].replace(np.nan,' ', regex=True)
-    """
-    energy_data = [] 
-    for row in data_scr.itertuples():
-        energy_data.append(EnergyDataAfterScreening(
-            id=row[3],
-            household_id=row[1],
-            date=pd.to_datetime(row[2]).strftime("%Y/%m/%d"),
-            hour=row[3],
-            minute=row[4],
-            total=row[5],
-            val1=row[6],
-            val2=row[7],
-            val3=row[8],
-            val4=row[9],
-            val5=row[10],
-            val6=row[11],
-            val7=row[12],
-            val8=row[13],
-            val9=row[14],
-            val10=row[15]))
-    """
+
     EnergyDataAfterScreening.objects.all().delete()
     regist_data = data_scr.drop(['id', 'area', 'year', 'month', 'date1', 'remove'], axis=1)
     
     energy_data = [] 
     for row in regist_data.itertuples():
         energy_data.append(EnergyDataAfterScreening(
-            id=row[3],
             household_id=row[1],
             date=pd.to_datetime(row[2]).strftime("%Y/%m/%d"),
             hour=row[3],
@@ -270,8 +248,7 @@ def demand_modeling(request) :
             val10=row[15]))
         
     EnergyDataAfterScreening.objects.bulk_create(energy_data)
-    #regist_data.to_sql('t_energy_data_after_screening', url, index=None,if_exists = 'replace')
-    
+    #regist_data.to_sql('energy_data_after_screening', url, index=None,if_exists = 'replace')
     params = {
         'histogram' : "data:image/png;base64," + histogram_img,
         'profiles' : profile_imgs,
