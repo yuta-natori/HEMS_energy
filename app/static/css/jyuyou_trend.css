@@ -144,7 +144,7 @@ body {
 }
 
 .jyuyou_trend h2 {
-	background: #DEA6A0;
+	background: #71b174;
 	color: #FFF;
 	margin: 0;
 }
@@ -189,7 +189,6 @@ body {
 	margin-left: 10px;
 }
 
-
 .number_input {
 	padding-left: .5em;
 	padding-bottom: .5em;
@@ -200,8 +199,16 @@ body {
 	padding-bottom: .5em;
 }
 
-
 .form_number {
+	margin-left: 10px;
+}
+
+.result_select {
+	padding-left: .5em;
+	padding-bottom: .5em;
+}
+
+.form_button {
 	margin-left: 10px;
 }
 
