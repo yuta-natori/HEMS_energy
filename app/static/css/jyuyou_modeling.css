@@ -153,7 +153,7 @@ body {
 
 .input {
 	float: left;
-	width: 27%;
+	width: 25%;
 }
 
 .jyuyou_class .jyuyou_inner {
@@ -187,27 +187,18 @@ body {
 	margin-left: 10px;
 }
 
-.bunsekijiki {
+.tanni_select {
 	padding-left: .5em;
 	padding-bottom: .5em;
 }
 
-.jiki_select {
+.tanni_form {
 	margin-left: 10px;
 }
 
-.number_input {
+.yosoku_select {
 	padding-left: .5em;
 	padding-bottom: .5em;
-}
-
-.normal_number_input {
-	padding-left: .5em;
-	padding-bottom: .5em;
-}
-
-.form_number {
-	margin-left: 10px;
 }
 
 .submit {
