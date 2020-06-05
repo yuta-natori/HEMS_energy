@@ -187,25 +187,29 @@ body {
 	margin-left: 10px;
 }
 
-.bunsekijiki {
+.tanni_select {
 	padding-left: .5em;
 	padding-bottom: .5em;
 }
 
-.jiki_select {
+.tanni_form {
 	margin-left: 10px;
 }
 
-.number_input {
+.yosoku_select {
 	padding-left: .5em;
 	padding-bottom: .5em;
 }
 
-.normal_number_input {
+.yosokukion_select {
 	padding-left: .5em;
 	padding-bottom: .5em;
 }
 
+.yosokukion_description {
+	margin-left: 10px;
+	font-size: 80%;
+}
 
 .form_number {
 	margin-left: 10px;
