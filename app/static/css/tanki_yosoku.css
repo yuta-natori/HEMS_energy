@@ -178,7 +178,7 @@ body {
 	padding-bottom: .5em;
 }
 
-.yyyy {
+.yyyymmdd {
 	margin-left: 10px;
 }
 
@@ -187,25 +187,9 @@ body {
 	padding-bottom: .5em;
 }
 
-.jiki_select {
+.yosokujikan_description {
+	font-size: 80%;
 	margin-left: 10px;
-}
-
-.number_input_all {
-	padding-left: .5em;
-	padding-bottom: .5em;
-}
-
-#number_input {
-	display: none;
-}
-
-#summer_number_input {
-	display: none;
-}
-
-#winter_number_input {
-	display: none;
 }
 
 .form_number {
