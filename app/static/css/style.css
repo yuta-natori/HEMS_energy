@@ -176,6 +176,11 @@ body {
   padding: .5em;
 }
 
+.description {
+	font-size: 80%;
+	margin-left: 90px;
+}
+
 .holiday {
 	margin: 20px;
 	margin-left: 220px;
@@ -195,11 +200,12 @@ body {
 }
 
 .reference {
-	margin-left: 150px;
+	margin-left: 300px;
+	
 }
 
 .yyyymmdd {
-	margin-left: 150px;
+	margin-left: 300px;
 }
 
 .submit {
