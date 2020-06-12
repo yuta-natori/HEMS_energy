@@ -161,8 +161,13 @@ body {
 	padding: .5em;
 }
 
-.db_select_data {
-	margin-left: 10px;
+.db_select_data select[name="data"]{
+	border-radius: .3em;
+	padding: 0.3em;
+	transition: 0.3s;
+	border: 1px solidf;
+	box-shadow: 1px 1px 2px 0 #707070 inset ;
+	background: #F5F5F5;
 }
 
 .kikan_select {
@@ -170,8 +175,13 @@ body {
 	padding-bottom: .5em;
 }
 
-.yyyymmdd {
-	margin-left: 10px;
+.yyyymmdd input[type="text"] {
+	border-radius: .3em;
+	padding: 0.3em;
+	transition: 0.3s;
+	border: 1px solidf;
+	box-shadow: 1px 1px 2px 0 #707070 inset ;
+	background: #F5F5F5;
 }
 
 .number_input {
@@ -179,8 +189,13 @@ body {
 	padding-bottom: .5em;
 }
 
-.form_number {
-	margin-left: 10px;
+.form_number input[type="number"]{
+	border-radius: .3em;
+	padding: 0.3em;
+	transition: 0.3s;
+	border: 1px solidf;
+	box-shadow: 1px 1px 2px 0 #707070 inset ;
+	background: #F5F5F5;
 }
 
 .submit {
