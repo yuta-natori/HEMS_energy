@@ -155,9 +155,13 @@ body {
 .input {
 	float: left;
 	width: 25%;
+	border: solid 3px #F5F5F5;
+	border-radius: .3em;
+	background: #F5F5F5;
 }
 
 .jyuyou_class .jyuyou_inner {
+	font-weight: bold;
 	padding: .5em;
 }
 
@@ -166,6 +170,7 @@ body {
 }
 
 .chiiki {
+	font-weight: bold;
 	padding-left: .5em;
 	padding-bottom: .5em;
 }
