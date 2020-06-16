@@ -154,9 +154,6 @@ def toukei_keisan(request):
     
 def jyuyou_class(request):
 	return render(request, 'app/jyuyou_class.html',{})
-    
-def jyuyou_trend(request):
-	return render(request, 'app/jyuyou_trend.html',{})
 
 def jyuyou_modeling(request):
 	return render(request, 'app/jyuyou_modeling.html',{})
