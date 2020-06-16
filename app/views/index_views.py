@@ -12,7 +12,8 @@ from app.models.holiday_data import HolidayData
 from app.models.temp_data import TempData
 from app.models.electricity_data import ElectricityData
 
-
+from app.form.demand_class_form import DemandClassForm
+from app.form.demand_modeling_form import DemandModelingForm
 
 def init():
     params = {
@@ -152,11 +153,20 @@ def toukei_keisan(request):
     # 対応するhtmlファイルを指定
     return render(request,'app/toukei_keisan.html',{})
     
-def jyuyou_class(request):
-	return render(request, 'app/jyuyou_class.html',{})
+def demand_class(request):
+    params = {
+        'form': DemandClassForm()
+    }
+    return render(request, 'app/jyuyou_class.html',params)
+    
+def jyuyou_trend(request):
+	return render(request, 'app/jyuyou_trend.html',{})
 
 def jyuyou_modeling(request):
-	return render(request, 'app/jyuyou_modeling.html',{})
+    params = {
+        'form': DemandModelingForm()
+    }
+    return render(request, 'app/jyuyou_modeling.html',params)
 
 def chouki_yosoku(request):
 	return render(request, 'app/chouki_yosoku.html',{})	

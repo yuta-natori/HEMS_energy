@@ -1,5 +1,9 @@
+window.onload = function() {
+  chkselect()
+}
+
 function chkselect() {
-    $val = $("select[name='jiki']").val();
+    $val = $("select[name='season']").val();
 
     if($val == 'year'){
         document.getElementById("number_input").style.display="block";
@@ -18,4 +22,14 @@ function chkselect() {
     }else {
         document.getElementById("winter_number_input").style.display="none";
     }
+}
+
+function clickDistribution() {
+    document.getElementById("distribution_img").style.display="block";
+    document.getElementById("histogram_img").style.display="none";
+}
+
+function clickHistogram() {
+    document.getElementById("distribution_img").style.display="none";
+    document.getElementById("histogram_img").style.display="block";
 }

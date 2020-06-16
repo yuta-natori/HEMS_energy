@@ -288,3 +288,11 @@ body {
 	-o-transition: 0.5s;
 	transition: 0.5s;
 }
+
+#distribution_img {
+    display : block;
+}
+
+#histogram_img {
+    display : none;
+}
