@@ -8,11 +8,12 @@ from PIL import Image
 import matplotlib.pyplot as plt
 from io import BytesIO
 import base64
+from matplotlib.backends.backend_pdf import PdfPages
+import img2pdf
 #form
 from app.form.demand_class_form import DemandClassForm
 #model
 from app.models.electricity_data import ElectricityData
-from django.db.models import Sum
 
 def analysis_demand_class(request):    
  
@@ -33,6 +34,8 @@ def analysis_demand_class(request):
         data_sum['count'] = count #countを追加
 
         global fig,plot
+        #pdf_data = PdfPages('demand_class_test.pdf')
+        
         #年間
         #目盛　内向き
         plt.rcParams['xtick.direction'] = 'in'
@@ -43,9 +46,9 @@ def analysis_demand_class(request):
         plot=plt.scatter(data_sum['count'], data_sum['total'],s = 20)
     
         #タイトル　ラベル
-        plt.title('%s年　需要家別電力需要量分布(年間)'%year,fontsize = 15) # タイトル
-        plt.xlabel('需要家番号 \n 地域：%s'%area, fontsize = 12) # x軸ラベル　#サブタイトル
-        plt.ylabel('電力需要量(kWh)', fontsize = 12) # y軸ラベル
+        plt.title(u'%s年　需要家別電力需要量分布(年間)'%year,fontsize = 15) # タイトル
+        plt.xlabel(u'需要家番号 \n 地域：%s'%area, fontsize = 12) # x軸ラベル　#サブタイトル
+        plt.ylabel(u'電力需要量(kWh)', fontsize = 12) # y軸ラベル
         plt.grid(False) # (8)目盛線の表示
     
         #軸目盛　間隔　
@@ -64,16 +67,10 @@ def analysis_demand_class(request):
             plt.text(data_sum['count'].count()-5,line_low+100, "%s"%line_low,size = 11, color = "#e41a1c")
             plt.text(data_sum['count'].count()-6,line_high+100, "%s"%line_high,size = 11, color = "#e41a1c")
         
-        #作成したグラフをPNG形式に変換
-        fig.canvas.draw()
-        im = np.array(fig.canvas.renderer.buffer_rgba())
-        img = Image.fromarray(im)
-        
-        #PNG画像をバイナリに変換
-        buffer = BytesIO() 
-        img.save(buffer, format="PNG")
-        base64Img = base64.b64encode(buffer.getvalue()).decode().replace("'", "")
+        #plt.savefig(pdf_data, format='pdf')
 
+        png_img,base64Img = makeImageBinary(fig)
+        
         #年間
         #目盛　外向き
         plt.rcParams['xtick.direction'] = 'out'
@@ -84,9 +81,9 @@ def analysis_demand_class(request):
         plot = plt.hist(data_sum['total'],bins=16,range=(0, 16000),ec='black')
         
         #タイトル　ラベル
-        plt.title('電力需要量―需要家ヒストグラム%s年'%year,fontsize = 15) # タイトル
-        plt.xlabel('年間電力需要量 (kWh)\n 地域：%s'%area, fontsize = 12) # x軸ラベル　#サブタイトル
-        plt.ylabel('需要家数', fontsize = 12) # y軸ラベル
+        plt.title(u'電力需要量―需要家ヒストグラム%s年'%year,fontsize = 15) # タイトル
+        plt.xlabel(u'年間電力需要量 (kWh)\n 地域：%s'%area, fontsize = 12) # x軸ラベル　#サブタイトル
+        plt.ylabel(u'需要家数', fontsize = 12) # y軸ラベル
         plt.grid(False) # (8)目盛線の表示
     
         #軸目盛　間隔
@@ -107,22 +104,34 @@ def analysis_demand_class(request):
             plt.vlines([line_low], ymin, ymax, '#e41a1c', linestyles='solid',linewidth = 1.5) 
             plt.vlines([line_high], ymin, ymax, '#e41a1c', linestyles='solid',linewidth = 1.5)
         
-        fig_.canvas.draw()
-        im_ = np.array(fig_.canvas.renderer.buffer_rgba())
-        img_ = Image.fromarray(im_)
-        
-        #PNG画像をバイナリに変換
-        buffer_ = BytesIO() 
-        img_.save(buffer_, format="PNG")
-        base64Img_ = base64.b64encode(buffer_.getvalue()).decode().replace("'", "")
+        #plt.savefig(pdf_data, format='pdf')
 
+        png_img_,base64Img_ = makeImageBinary(fig_)
+
+        #pdf_data.close()
+        pdfFileName = 'pdf_test.pdf'
+        '''
+        merge = PyPDF2.PdfFileMerger()
+        for j in os.listdir(pdf_path):
+            merge.append(pdf_path + "/" + j)
+        
+        merge.write(pdf_path + "/" + "sample.pdf")
+        merge.close()
+        
+            
+        #pdfファイルを読み込み
+        file = open(pdfFileName, "wb")
+        #pdfファイルを書き込み
+        file.write(img2pdf.convert(base64Img))
+        file.close() 
+        '''
         return base64Img, base64Img_
     
     #日本語　フォント
     rcParams['font.family'] = 'sans-serif'
     rcParams['font.sans-serif'] = ['Hiragino Maru Gothic Pro', 'Yu Gothic',
-                                   'Meirio', 'Takao', 'IPAexGothic', 'IPAPGothic',
-                                   'VL PGothic', 'Noto Sans CJK JP','Hiragino Kaku Gothic ProN']
+                                'Meirio', 'Takao', 'IPAexGothic', 'IPAPGothic',
+                                'VL PGothic', 'Noto Sans CJK JP','Hiragino Kaku Gothic ProN']
 
     #期間指定
     select_year = request.POST['year']
@@ -201,3 +210,14 @@ def setLineHighLow(min_line, max_line):
         line_high = int(max_line)
     
     return line_low, line_high
+
+def makeImageBinary(fig):
+    #作成したグラフをPNG形式に変換
+    fig.canvas.draw()
+    im = np.array(fig.canvas.renderer.buffer_rgba())
+    img = Image.fromarray(im)
+    
+    #PNG画像をバイナリに変換
+    buffer = BytesIO() 
+    img.save(buffer, format="PNG")
+    return img,base64.b64encode(buffer.getvalue()).decode().replace("'", "")
