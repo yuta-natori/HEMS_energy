@@ -68,8 +68,8 @@
 					
 					<div class="ds_inner">
 						<p class="file_specified">■ファイル場所の指定</p>
-						<p class="explain">・ファイル名の指定　:　yyyymmdd_yyyymmdd_地域名.csv<br>
-						（一つ目の「yyyymmdd」は開始日付、二つ目の「yyyymmdd」は終了日付を入力、地域名は漢字で指定してください）</p>
+						<p class="description">ファイル名の指定　:　yyyymmdd_yyyymmdd_地域名.csv<br>
+						一つ目の「yyyymmdd」は開始日付、二つ目の「yyyymmdd」は終了日付を入力、地域名は漢字で指定してください</p>
 						<form action="{% url 'app:electric_power' %}" method="post">
     						{% csrf_token %}
     						<p class="reference">{{ electricPower.epFile }}</p>
@@ -84,8 +84,9 @@
 					
 					<div class="td_inner">
 						<p class="file_specified">■ファイル場所の指定</p>
-						<p class="explain">・ファイル名の指定　:　temperature_地域名_yyyy_yyyy.csv<br>
-						（一つ目の「yyyy」は開始年、二つ目の「yyyy」は終了年を入力、地域名は漢字で指定してください）</p>
+						<p class="description">ファイル名の指定　:　temperature_地域名_yyyy_yyyy.csv<br>
+						気象庁のホームページから、格納した電力データと同じ期間の気温データをダウンロードしてください<br>
+						一つ目の「yyyy」は開始年、二つ目の「yyyy」は終了年を入力、地域名は漢字で指定してください</p>
 						<form action="{% url 'app:temperature' %}" method="post">
     						{% csrf_token %}
     						<p class="reference">{{ temperature.tmpFile }}</p>
@@ -116,6 +117,6 @@
 		
 		<script>
 		<!-- jQuery first, then Tether, then Bootstrap JS. -->
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+		<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>-->
 	</body>
 </html>

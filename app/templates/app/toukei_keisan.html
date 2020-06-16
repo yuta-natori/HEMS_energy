@@ -13,7 +13,6 @@
 		<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1/i18n/jquery.ui.datepicker-ja.min.js"></script>
 		<link href="https://fonts.googleapis.com/css?family=Lato:400,700|Noto+Sans+JP:400,700" rel="stylesheet">
 		<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/smoothness/jquery-ui.css" >
-		<script type="text/javascript" src="static/js/toukei_keisan.js"></script>
 		
 		<script type="text/javascript">
 		$(function(){
@@ -78,9 +77,11 @@
 					</div>
 					
 					<div class="kikan_select">
-						<p>■算出期間の選択</p>
-						<p class="yyyymmdd"><input type="text" id="from"/>から</p>
-						<p class="yyyymmdd"><input type="text" id="to"/>まで</p>
+						<p class="font_weight">■算出期間の選択</p>
+						<p class="yyyymmdd">from<br>
+							<input type="text" id="from"/></p>
+						<p class="yyyymmdd">to<br>
+							<input type="text" id="to"/></p>
 					</div>
 				
 					
@@ -98,19 +99,11 @@
 				</div>
 				
 					<div class="cp_tab">
-		
-						<input type="radio" name="cp_tab" id="tab1_1" aria-controls="first_tab01" checked>
-						<label for="tab1_1">データセット</label>
-					
-					<div class="cp_tabpanels">
-					
-						<div id="first_tab01" class="cp_tabpanel">
-							<p>First Tab text</p>
-						</div>
-					
+						<ul>
+							<li><a href="#">データセット</a></li>
+						</ul>
 					</div>
-		
-					</div>
+					
 
 			</div>
 			

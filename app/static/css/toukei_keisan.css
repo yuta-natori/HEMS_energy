@@ -143,7 +143,7 @@ body {
 	width: 1100px;
 	border-radius: 5px;
 	/*border: 2px solid #000000;*/
-	float: left;	
+	float: left;
 }
 
 .toukei_keisan h2 {
@@ -154,15 +154,24 @@ body {
 
 .input {
 	float: left;
-	width: 27%;
+	width: 17%;
+	border: solid 3px #F5F5F5;
+	background: #F5F5F5;
 }
 
 .toukei_keisan .toukei_inner {
+	font-weight: bold;
 	padding: .5em;
 }
 
-.db_select_data {
-	margin-left: 10px;
+
+.db_select_data select[name="data"]{
+	border-radius: .3em;
+	padding: 0.3em;
+	transition: 0.3s;
+	border: 1px solid;
+	box-shadow: 1px 1px 2px 0 #696969 inset ;
+	width: 160px;
 }
 
 .kikan_select {
@@ -170,93 +179,99 @@ body {
 	padding-bottom: .5em;
 }
 
-.yyyymmdd {
-	margin-left: 10px;
+.font_weight {
+	font-weight: bold;
+}
+
+
+.yyyymmdd input[type="text"] {
+	border-radius: .3em;
+	padding: 0.3em;
+	transition: 0.3s;
+	border: 1px solid;
+	box-shadow: 1px 1px 2px 0 #696969 inset ;
+	font-weight: 500;
 }
 
 .number_input {
+	font-weight: 700;
 	padding-left: .5em;
 	padding-bottom: .5em;
 }
 
-.form_number {
-	margin-left: 10px;
+
+
+.form_number input[type="number"]{
+	border-radius: .3em;
+	padding: 0.3em;
+	transition: 0.3s;
+	border: 1px solid;
+	box-shadow: 1px 1px 2px 0 #696969 inset ;
 }
 
 .submit {
-	margin-left: 60px;
+	text-align: center;
 }
 
-.cp_tab *, .cp_tab *:before, .cp_tab *:after {
-	-webkit-box-sizing: border-box;
-	        box-sizing: border-box;
+.cp_tab ul{
+	margin:0;
+	padding:0;
 }
 
-.cp_tab {
+.cp_tab ul li {
+	list-style: none;
+	margin:0;
+	padding:0;
+	font-size:80%;
 	float: left;
-	margin: .5em;
-	width: 71%;
-	
+	width: 180px;/*親メニューの幅*/
+	height: 40px;/*親メニューの高さ*/
+	line-height: 40px;
+	background: white;/*親メニューの背景色*/
+	color: black;/*親メニューの文字色*/
+	text-align:center;
 }
 
-.cp_tab > input[type='radio'] {
-	margin: 0;
-	padding: 0;
-	border: none;
-	border-radius: 0;
-	outline: none;
-	background: none;
-	-webkit-appearance: none;
-	        appearance: none;
-	display: none;
-}
-
-.cp_tab .cp_tabpanel {
-	display: none;
-}
-
-.cp_tab > input:first-child:checked ~ .cp_tabpanels > .cp_tabpanel:first-child,
-.cp_tab > input:nth-child(3):checked ~ .cp_tabpanels > .cp_tabpanel:nth-child(2),
-.cp_tab > input:nth-child(5):checked ~ .cp_tabpanels > .cp_tabpanel:nth-child(3),
-.cp_tab > input:nth-child(7):checked ~ .cp_tabpanels > .cp_tabpanel:nth-child(4),
-.cp_tab > input:nth-child(9):checked ~ .cp_tabpanels > .cp_tabpanel:nth-child(5),
-.cp_tab > input:nth-child(11):checked ~ .cp_tabpanels > .cp_tabpanel:nth-child(6) {
+.cp_tab ul li a {
+	color: black;
 	display: block;
+	text-decoration: none;
 }
 
-.cp_tab > label {
-	display: inline-block;
-	padding: 8px;
-	cursor: pointer;
-	border: 1px solid transparent;
-	border-bottom: 0;
-	font-size: 80%;
+.cp_tab ul li:hover, .cp_tab ul li a:hover {
+	background: whitesmoke;/*ホバー時の親メニューの背景色*/
+	color: royalblue;/*ホバー時の親メニューの文字色*/
 }
 
-.cp_tab > label:hover,
-.cp_tab > input:focus + label {
-	color: #0066cc;
+.cp_tab ul li ul {
+	top: 40px;/*親メニューの高さと同じにする*/
+	width: 180px;
 }
 
-.cp_tab > input:checked + label {
-	margin-bottom: -1px;
-	border-color: #cccccc;
-	border-bottom: 1px solid #ffffff;/*背景色と同じ*/
-	border-radius: 6px 6px 0 0;
+.cp_tab ul li ul li {
+	visibility: hidden;
+	overflow: hidden;
+	width: 180px;/*サブメニューの幅*/
+	height: 0;
+	background: whitesmoke;/*サブメニューの背景色*/
+	font-size: 100%;
 }
 
-.cp_tab .cp_tabpanel {
-	padding: 0.5em 1em;
-	border-top: 1px solid #cccccc;
+.cp_tab ul li ul li:hover, .cp_tab ul li ul li a:hover {
+	background: #DCDCDC;/*ホバー時のサブメニューの背景色*/
 }
 
-@media (max-width: 480px) {
-	.cp_tab {
-		width: 100%;
-		font-size: 0.8em;
+.cp_tab ul li:hover ul li, .cp_tab ul li a:hover ul li{
+	visibility: visible;
+	overflow: visible;
+	height:40px;/*サブメニューの高さ*/
 }
 
-.cp_tab label {
-		padding: 0.5em;
+.cp_tab * {
+	-webkit-transition: 0.5s;
+	-moz-transition: 0.5s;
+	-ms-transition: 0.5s;
+	-o-transition: 0.5s;
+	transition: 0.5s;
 }
 

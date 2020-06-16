@@ -154,18 +154,28 @@ body {
 
 .input {
 	float: left;
-	width: 27%;
+	width: 25%;
+	border: solid 3px #F5F5F5;
+	border-radius: .3em;
+	background: #F5F5F5;
 }
 
 .jyuyou_class .jyuyou_inner {
+	font-weight: bold;
 	padding: .5em;
 }
 
-.db_select_data {
-	margin-left: 10px;
+.db_select_data select[name="data"]{
+	border-radius: .3em;
+	padding: 0.3em;
+	transition: 0.3s;
+	border: 1px solid;
+	box-shadow: 1px 1px 2px 0 #696969 inset ;
+	width: 160px;
 }
 
 .chiiki {
+	font-weight: bold;
 	padding-left: .5em;
 	padding-bottom: .5em;
 }
