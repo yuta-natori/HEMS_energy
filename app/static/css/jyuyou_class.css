@@ -165,8 +165,13 @@ body {
 	padding: .5em;
 }
 
-.db_select_data {
-	margin-left: 10px;
+.db_select_data select[name="data"]{
+	border-radius: .3em;
+	padding: 0.3em;
+	transition: 0.3s;
+	border: 1px solid;
+	box-shadow: 1px 1px 2px 0 #696969 inset ;
+	width: 160px;
 }
 
 .chiiki {
