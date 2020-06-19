@@ -3,6 +3,7 @@ from .views import index_views
 from .views import trend_analysis_views
 from .views import demand_class_views
 from .views import demand_modeling_views
+from .views import short_term_forecast_views
 
 app_name = 'app'
 urlpatterns = [
@@ -21,5 +22,7 @@ urlpatterns = [
   path('demand_modeling', demand_modeling_views.demand_modeling, name='demand_modeling'),
   
   path('chouki_yosoku', index_views.chouki_yosoku, name='chouki_yosoku'),
+  #短期需要予測
   path('tanki_yosoku', index_views.tanki_yosoku, name='tanki_yosoku'),
+  path('short_term_forecast', short_term_forecast_views.short_term_forecast, name='short_term_forecast'),
 ]
