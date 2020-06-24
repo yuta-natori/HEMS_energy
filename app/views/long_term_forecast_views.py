@@ -3,23 +3,37 @@ from django.shortcuts import render
 import base64
 from io import BytesIO
 from PIL import Image
+#form
+from app.form.long_term_forecast_form import LongTermForecastForm
 
 def long_term_forecast(request):
     
     #予測単位から取得する画像を選択
-    img_name = 'long_term_forecast_in_month.png'
+    unit = request.POST['forecastUnit']
+    img_name = None
+    
+    if unit == 'month':
+        img_name = 'long_term_forecast_in_month.png'
+    elif unit == 'day':
+        img_name = 'long_term_forecast_in_day.png'
+    elif unit == 'hour':
+        img_name = 'long_term_forecast_in_hour.png'
+    
     
     #グラフ画像を取得
     png_img = Image.open('app/static/images/' + img_name)
     
-    #24時間需要量予測日の指定がある場合はそのグラフも取得
-    designeted_img = Image.open('app/static/images/long_term_forecast_24hours.png')
-    designed = "data:image/png;base64," + makeImageBinary(designeted_img)
+    #24時間需要量予測日の指定がある場合はそのグラフも取得 
+    if request.POST['forecastDate']:    
+        designated_img = Image.open('app/static/images/long_term_forecast_24hours.png')
+        designated = "data:image/png;base64," + makeImageBinary(designated_img)
+    else:
+        designated = None
 
     params = {
         'graph' : "data:image/png;base64," + makeImageBinary(png_img),
-        'designated' : designed
-        #'form' : DemandClassForm(request.POST or None)
+        'designated' : designated,
+        'form' : LongTermForecastForm(request.POST or None)
     }
     
     #グラフをbase64形式で取得

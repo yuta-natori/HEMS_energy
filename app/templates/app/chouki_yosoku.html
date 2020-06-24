@@ -7,6 +7,7 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 		<link rel="stylesheet" type="text/css" href="{% static 'css/chouki_yosoku.css' %}">
+		<script type="text/javascript" src="{% static 'js/long_term_forecast.js' %}"></script>
 		<script src="https://kit.fontawesome.com/d995c7ddf7.js" crossorigin="anonymous"></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 		<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.min.js"></script>
@@ -16,14 +17,14 @@
 		
 		<script type="text/javascript">
 		$(function(){
-			var from = $("#from").datepicker({
+			var from = $("#id_fromForecast").datepicker({
 					onSelect: function(selectedDate) {
-					$("#to").datepicker("option","minDate",selectegDate);
+					$("#id_toForecast").datepicker("option","minDate",selectegDate);
 				}
 			});
-				var to =$("#to").datepicker({
+				var to =$("#id_toForecast").datepicker({
 					onSelect: function(selectedDate){
-					$("#from").datepicker("option","maxDate",selectedDate);
+					$("#id_fromForecast").datepicker("option","maxDate",selectedDate);
 				}
 			});
 			});
@@ -73,28 +74,24 @@
     					{% csrf_token %}
     						<div class="chiiki">
     							<p>■地域の指定</p>
-    							<p class="chiiki_select"><input type="text"></p>
+    							{{form.area}}
     						</div>
     						
     						<div class="kikan_select">
     						  <p>■予測期間の選択</p>
-    							<p class="yyyymmdd"><input type="text" id="from"/>から</p>
-    							<p class="yyyymmdd"><input type="text" id="to"/>まで</p>
+    							<p class="yyyymmdd">{{form.fromForecast}}から</p>
+    							<p class="yyyymmdd">{{form.toForecast}}まで</p>
     						</div>
     						
     						<div class="tanni_select">
     							<p>■予測単位の指定</p>
-    							<p class="tanni_form"><select name="tanni">
-    							<option value="">-</option>
-    							<option value="month">month</option>
-    							<option value="day">day</option>
-    							<option value="hour">hour</option>
-    							</select>
+    							<p class="tanni_form">
+    							{{form.forecastUnit}}
     						</div>
     						
     						<div class="yosoku_select">
     							<p>■24時間需要量予測日の指定</p>
-    							<p class="yyyymmdd"><input type="text" id="datepicker"></p>
+    							<p class="yyyymmdd">{{form.forecastDate}}</p>
     						</div>
     						
     						<div class="yosokukion_select">
@@ -103,7 +100,7 @@
     								予測したい気温を月ごとにカンマ区切りで入力してください。<br>
     								(例：23,21,26)
     							</p>
-    							<p class="form_number"><input type="number"></p>
+    							<p class="form_number">{{form.forecastTemp}}</p>
     						</div>
     						
     						<div class="submit_buttom">
@@ -115,17 +112,9 @@
 					<div class="cp_tab">
 						<ul>
 						
-							<li><a href="#">月需要量予測</a>
-								<ul>
-									<li><a href="#">月需要量予測(グラフ)</a></li>
-								</ul>
-							</li>
+							<li><a href="#" onclick="clickGraph()">月需要量予測</a></li>
 							
-							<li><a href="#">24時間需要量予測</a>
-								<ul>
-									<li><a href="#">24時間需要量予測(グラフ)</a></li>
-								</ul>
-							</li>
+							<li><a href="#" onclick="clickDesignated()">24時間需要量予測</a></li>
 							
 							{% if graph %}
            					<div id="graph_img">

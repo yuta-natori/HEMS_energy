@@ -19,7 +19,7 @@
 		
 		<script type="text/javascript">
 		$(function() {
-			$("#datepicker").datepicker();
+			$("#id_startForecast").datepicker();
 		 });
 		</script>
 		
@@ -63,12 +63,12 @@
 
     					<div class="chiiki">
     						<p>■地域の指定</p>
-    						<p class="chiiki_select"><input type="text"></p>
+    						<p class="chiiki_select">{{form.area}}</p>
     					</div>
     					
     					<div class="kikan_select">
     						<p>■予測開始年月日年の選択</p>
-    						<p class="yyyymmdd"><input type="text" id="datepicker"></p>
+    						<p class="yyyymmdd">{{form.startForecast}}</p>
     					</div>
     					
     					<div class="bunsekijiki">
@@ -77,7 +77,7 @@
     								予測したい時間帯をカンマ区切りで３時間分入力してください。<br>
     								(例：14,15,16)
     							</p>
-    							<p class="form_number"><input type="number"></p>
+    							<p class="form_number">{{form.forecastTime}}</p>
     					</div>
     					
     					<div class="submit_buttom">

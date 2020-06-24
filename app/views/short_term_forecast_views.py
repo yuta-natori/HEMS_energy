@@ -3,6 +3,8 @@ from django.shortcuts import render
 import base64
 from io import BytesIO
 from PIL import Image
+#form
+from app.form.short_term_forecast_form import ShortTermForecastForm
 
 def short_term_forecast(request):
     
@@ -10,8 +12,8 @@ def short_term_forecast(request):
     png_img = Image.open('app/static/images/short_term_forecast.png')
     
     params = {
-        'graph' : "data:image/png;base64," + makeImageBinary(png_img)
-        #'form' : DemandClassForm(request.POST or None)
+        'graph' : "data:image/png;base64," + makeImageBinary(png_img),
+        'form' : ShortTermForecastForm(request.POST or None)
     }
     
     #グラフをbase64形式で取得

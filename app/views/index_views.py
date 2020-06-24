@@ -14,6 +14,8 @@ from app.models.electricity_data import ElectricityData
 
 from app.form.demand_class_form import DemandClassForm
 from app.form.demand_modeling_form import DemandModelingForm
+from app.form.long_term_forecast_form import LongTermForecastForm
+from app.form.short_term_forecast_form import ShortTermForecastForm
 
 def init():
     params = {
@@ -169,10 +171,16 @@ def jyuyou_modeling(request):
     return render(request, 'app/jyuyou_modeling.html',params)
 
 def chouki_yosoku(request):
-	return render(request, 'app/chouki_yosoku.html',{})	
+    params = {
+        'form': LongTermForecastForm()
+    }
+    return render(request, 'app/chouki_yosoku.html',params)	
 
 def tanki_yosoku(request):
-	return render(request, 'app/tanki_yosoku.html',{})
+    params = {
+        'form' : ShortTermForecastForm()
+    }
+    return render(request, 'app/tanki_yosoku.html',params)
 	
 	
 
