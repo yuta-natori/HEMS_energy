@@ -1,7 +1,6 @@
 from django.shortcuts import render
 import os
 import pandas as pd
-import mysql.connector
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import rcParams
@@ -9,6 +8,12 @@ import datetime
 from app.models.holiday_data import HolidayData
 from app.models.temp_data import TempData
 from app.models.electricity_data import ElectricityData
+from PIL import Image
+import matplotlib.pyplot as plt
+from io import BytesIO
+import base64
+from matplotlib.backends.backend_pdf import PdfPages
+import img2pdf
 
 #地域名のベクトル作成
 region = '新横浜'
@@ -79,84 +84,72 @@ def execute_trend(request):
 
         data_sum = data_class.groupby(('household_id'), as_index=False).sum()
         data_sum = data_sum.rename(columns={'total': 'x'})
-        
-        #high 
-        high = data_sum.query('x > %s'%line_high)#値　ベタ打ち
-        high = pd.merge(high,data_base,on = 'household_id')
-        high_ = high[['household_id','date','hour','total']]
-        data_high = high[['date','hour','total']]
-        high = data_high.groupby(['date','hour'], as_index=False).mean()
-        high = high.sort_values(['date','hour'])
-        high['date1'] =  pd.to_datetime(total['date'])
-        high = high.rename(columns={'total': 'x'}) #Rでxになっている為変更
-        
-        #high_.to_sql('demand_ele_hourly_%s_%s_%s_high'%(region_,s_date[:4]+s_date[5:7]+s_date[8:10],e_date[:4]+e_date[5:7]+e_date[8:10]), url, index=None,if_exists = 'replace')
-        
-        data_high = data_high[['date','hour','total']]
-        data_high = data_high.groupby(['date'], as_index=True).agg({'total':['mean','max','min']}) 
-        data_high = data_high.reset_index()
-        data_high['year'] = data_high['date'].astype(str).str[:4]
-        data_high['month'] = data_high['date'].astype(str).str[5:7]
-        data_high['day'] = data_high['date'].astype(str).str[8:10]
-        data_high = data_high[['year','month','day','total']]
-        
-        data_high['year'] = data_high['year'].astype(int)
-        data_high['month'] = data_high['month'].astype(int)
-        data_high['day'] = data_high['day'].astype(int)
-        #data_high.to_sql('demand_ele_stats_%s_%s_%s_high'%(region_,s_date[:4]+s_date[5:7]+s_date[8:10],e_date[:4]+e_date[5:7]+e_date[8:10]), url, index=None,if_exists = 'replace')
-        
-        
-        #middle
-        mid = data_sum.query('%s <= x <= %s'%(line_low,line_high))#値　ベタ打ち R記載(x >= 10000 & x <= 20000) 
-        mid = pd.merge(mid,data_base,on = 'household_id')
-        mid_ = mid[['household_id','date','hour','total']]
-        data_mid = mid[['date','hour','total']]
-        mid = data_mid.groupby(['date','hour'], as_index=False).mean()
-        mid = mid.sort_values(['date','hour'])
-        mid['date1'] = pd.to_datetime(total['date'])
-        mid = mid.rename(columns={'total': 'x'}) #Rでxになっている為変更
-        
-        #mid_.to_sql('demand_ele_hourly_%s_%s_%s_mid'%(region_,s_date[:4]+s_date[5:7]+s_date[8:10],e_date[:4]+e_date[5:7]+e_date[8:10]), url, index=None,if_exists = 'replace')
-        
-        data_mid = data_mid[['date','hour','total']]
-        data_mid = data_mid.groupby(['date'], as_index=True).agg({'total':['mean','max','min']}) 
-        data_mid = data_mid.reset_index()
-        data_mid['year'] = data_mid['date'].astype(str).str[:4]
-        data_mid['month'] = data_mid['date'].astype(str).str[5:7]
-        data_mid['day'] = data_mid['date'].astype(str).str[8:10]
-        data_mid = data_mid[['year','month','day','total']]
-        
-        data_mid['year'] = data_mid['year'].astype(int)
-        data_mid['month'] = data_mid['month'].astype(int)
-        data_mid['day'] = data_mid['day'].astype(int)
-        
-        #data_mid.to_sql('demand_ele_stats_%s_%s_%s_mid'%(region_,s_date[:4]+s_date[5:7]+s_date[8:10],e_date[:4]+e_date[5:7]+e_date[8:10]), url, index=None,if_exists = 'replace')
-        
-        #low
-        low = data_sum.query('x < %s'%line_low)
-        low = pd.merge(low,data_base,on = 'household_id')
-        low_ = low[['household_id','date','hour','total']]
-        data_low = low[['date','hour','total']]
-        low = data_low.groupby(['date','hour'],as_index=False).mean()
-        low = low.sort_values(['date','hour'])
-        low['date1'] = pd.to_datetime(total['date'])
-        low = low.rename(columns={'total': 'x'}) #Rでxになっている為変更
-        
-        #low_.to_sql('demand_ele_hourly_%s_%s_%s_low'%(region_,s_date[:4]+s_date[5:7]+s_date[8:10],e_date[:4]+e_date[5:7]+e_date[8:10]), url, index=None,if_exists = 'replace')
-        
-        data_low = data_low[['date','hour','total']]
-        data_low = data_low.groupby(['date'], as_index=True).agg({'total':['mean','max','min']}) 
-        data_low = data_low.reset_index()
-        data_low['year'] = data_low['date'].astype(str).str[:4]
-        data_low['month'] = data_low['date'].astype(str).str[5:7]
-        data_low['day'] = data_low['date'].astype(str).str[8:10]
-        data_low = data_low[['year','month','day','total']]
-        
-        data_low['year'] = data_low['year'].astype(int)
-        data_low['month'] = data_low['month'].astype(int)
-        data_low['day'] = data_low['day'].astype(int)
-        
-        #data_low.to_sql('demand_ele_stats_%s_%s_%s_low'%(region_,s_date[:4]+s_date[5:7]+s_date[8:10],e_date[:4]+e_date[5:7]+e_date[8:10]), url, index=None,if_exists = 'replace')
+        for row in data_sum.itertuples():
+            totalFlg = checkClass(row[2], line_high, line_low)
+            
+        if totalFlg == 0:
+            #high 
+            high = data_sum.query('x > %s'%line_high)#値　ベタ打ち
+            high = pd.merge(high,data_base,on = 'household_id')
+            data_high = high[['date','hour','total']]
+            high = data_high.groupby(['date','hour'], as_index=False).mean()
+            high = high.sort_values(['date','hour'])
+            high['date1'] =  pd.to_datetime(total['date'])
+            high = high.rename(columns={'total': 'x'}) #Rでxになっている為変更
+                        
+            data_high = data_high[['date','hour','total']]
+            data_high = data_high.groupby(['date'], as_index=True).agg({'total':['mean','max','min']}) 
+            data_high = data_high.reset_index()
+            data_high['year'] = data_high['date'].astype(str).str[:4]
+            data_high['month'] = data_high['date'].astype(str).str[5:7]
+            data_high['day'] = data_high['date'].astype(str).str[8:10]
+            data_high = data_high[['year','month','day','total']]
+            
+            data_high['year'] = data_high['year'].astype(int)
+            data_high['month'] = data_high['month'].astype(int)
+            data_high['day'] = data_high['day'].astype(int)
+        elif totalFlg == 1:
+            #low
+            low = data_sum.query('x < %s'%line_low)
+            low = pd.merge(low,data_base,on = 'household_id')
+            data_low = low[['date','hour','total']]
+            low = data_low.groupby(['date','hour'],as_index=False).mean()
+            low = low.sort_values(['date','hour'])
+            low['date1'] = pd.to_datetime(total['date'])
+            low = low.rename(columns={'total': 'x'}) #Rでxになっている為変更
+                        
+            data_low = data_low[['date','hour','total']]
+            data_low = data_low.groupby(['date'], as_index=True).agg({'total':['mean','max','min']}) 
+            data_low = data_low.reset_index()
+            data_low['year'] = data_low['date'].astype(str).str[:4]
+            data_low['month'] = data_low['date'].astype(str).str[5:7]
+            data_low['day'] = data_low['date'].astype(str).str[8:10]
+            data_low = data_low[['year','month','day','total']]
+            
+            data_low['year'] = data_low['year'].astype(int)
+            data_low['month'] = data_low['month'].astype(int)
+            data_low['day'] = data_low['day'].astype(int)
+        else:    
+            #middle
+            mid = data_sum.query('%s <= x <= %s'%(line_low,line_high))#値　ベタ打ち R記載(x >= 10000 & x <= 20000) 
+            mid = pd.merge(mid,data_base,on = 'household_id')
+            data_mid = mid[['date','hour','total']]
+            mid = data_mid.groupby(['date','hour'], as_index=False).mean()
+            mid = mid.sort_values(['date','hour'])
+            mid['date1'] = pd.to_datetime(total['date'])
+            mid = mid.rename(columns={'total': 'x'}) #Rでxになっている為変更
+                        
+            data_mid = data_mid[['date','hour','total']]
+            data_mid = data_mid.groupby(['date'], as_index=True).agg({'total':['mean','max','min']}) 
+            data_mid = data_mid.reset_index()
+            data_mid['year'] = data_mid['date'].astype(str).str[:4]
+            data_mid['month'] = data_mid['date'].astype(str).str[5:7]
+            data_mid['day'] = data_mid['date'].astype(str).str[8:10]
+            data_mid = data_mid[['year','month','day','total']]
+            
+            data_mid['year'] = data_mid['year'].astype(int)
+            data_mid['month'] = data_mid['month'].astype(int)
+            data_mid['day'] = data_mid['day'].astype(int)
         
         #user毎の統計量
         user_all = data_base.query("household_id == '%s'"%user_id)
@@ -184,30 +177,43 @@ def execute_trend(request):
         trend_year1(total,2017,'Total')
         year_fc_t_2017 = year_fc
         
-        #trend_year1(high,2017,'High')
-        year_fc_h_2017 = year_fc
-        
-        trend_year1(mid,2017,'Mid')
-        year_fc_m_2017 = year_fc
-        
-        #trend_year1(low,2017,'Low')
-        year_fc_l_2017 = year_fc
+        if totalFlg == 0:
+            trend_year1(high,2017,'High')
+        elif totalFlg == 1:
+            trend_year1(low,2017,'Low')
+        else:
+            trend_year1(mid,2017,'Mid')
         
         #気温 読み込み
         temp_(2017)
         
         #年間電力需要量－外気温トレンド
-        trend_year2_glaph(year_fc_t_2017,year_fc_h_2017,year_fc_m_2017,year_fc_l_2017,'blue','green','red',2017)
+        #画像取得
+        distribution, histogram = trend_year2_glaph(year_fc_t_2017,year_fc,'blue','green','red',2017,totalFlg)
+    
+        '''TODO: 作成したFormに置き換える
+        params = {
+            'distribution' : "data:image/png;base64," + distribution,
+            'histogram' : "data:image/png;base64," + histogram,
+            'form' : DemandClassForm(request.POST or None)
+            }
+    
+        #グラフをbase64形式で取得
+        return render(request, 'app/jyuyou_trend.html', params)
+        
+        '''
         
         #月毎需要トレンド分析
-        #trend_month(high,2017,3,'Total')
+        #trend_month(mid,2017,3,'Total')
         
         #週間需要トレンド分析
-        trend_week(total,2017,2,3,'Total', name)
+        #trend_week(total,2017,2,3,'Total')
         
         #24時間需要トレンド分析
         #trend_day(high,'High','2017/01/01')
-        trend_day(total,'Total','2017/02/13')
+        #trend_day(total,'Total','2017/02/13')
+        
+        """
         
         ##2018年
         trend_year1(total,2018,'Total')
@@ -227,7 +233,7 @@ def execute_trend(request):
         temp_(2018)
         
         #年間電力需要量－外気温トレンド
-        trend_year2_glaph(year_fc_t_2018,year_fc_h_2018,year_fc_m_2018,year_fc_l_2018,'blue','green','red',2018)
+        trend_year2_glaph(year_fc_t_2018,year_fc_h_2018,year_fc_m_2018,year_fc_l_2018,'blue','green','red',2018,totalFlg)
         
         #月毎需要トレンド分析
         trend_month(total,2018,3,'Total')
@@ -245,6 +251,7 @@ def execute_trend(request):
         print(year_fc_t_2018.describe())
         
         #high
+        
         glaph_(year_fc_h_2017,year_fc_h_2018,'black','blue','High')
         print(year_fc_h_2017.describe())
         print(year_fc_h_2018.describe())
@@ -256,6 +263,15 @@ def execute_trend(request):
         glaph_(year_fc_l_2017,year_fc_l_2018,'black','blue','Low')
         print(year_fc_l_2017.describe())
         print(year_fc_l_2018.describe())
+        """
+        
+def checkClass(total,line_high,line_low):
+    if total > line_high:
+        return 0
+    elif total < line_low:
+        return 1
+    else:
+        return 2
         
 def trend_year1(ds,y,cl_):
     global year_fc,min_max_df,month
@@ -327,7 +343,7 @@ def temp_(y):
     temp = temp.groupby(['year','month'],as_index=False).mean()
     temp_ts = list(temp['x'])
     
-def trend_year2_glaph(cl_t,cl_h,cl_m,cl_l,col_h,col_m,col_l,y):
+def trend_year2_glaph(cl_t,cl,col_h,col_m,col_l,y,totalFlg):
     global temp,temp_ts ,fig,month
     
     #目盛　内向き
@@ -336,9 +352,12 @@ def trend_year2_glaph(cl_t,cl_h,cl_m,cl_l,col_h,col_m,col_l,y):
     fig = plt.figure()
     ax1 = fig.add_subplot(111)
     month = list(range(1,len(cl_t['x'])+1)) #12だと11までしか出力されないので+1している
-    #plt.plot(month, cl_h['x'],c=col_h,label='需要家(High)')
-    plt.plot(month, cl_m['x'],c=col_m,label='需要家(Mid)')
-    #plt.plot(month, cl_l['x'],c=col_l,label='需要家(Low)')
+    if totalFlg == 0:
+        plt.plot(month, cl['x'],c=col_h,label='需要家(High)')
+    elif totalFlg == 1:
+        plt.plot(month, cl['x'],c=col_l,label='需要家(Low)')
+    else:
+        plt.plot(month, cl['x'],c=col_m,label='需要家(Mid)')
     plt.xlim(1,len(cl_t['x']))
     plt.ylim(100,1700)
     plt.xticks(np.arange(1,len(cl_t['x'])+1,1))
@@ -365,7 +384,11 @@ def trend_year2_glaph(cl_t,cl_h,cl_m,cl_l,col_h,col_m,col_l,y):
     ax1.legend(h1+h2, l1+l2,fontsize=12, loc="upper left")
     plt.tick_params(labelsize=13) #x軸,y軸 目盛文字　サイズ
 
-    #plt.show()
+    plt.show()
+    
+    png_img,base64Img = makeImageBinary(fig)
+    
+    return base64Img
 
 
 
@@ -386,7 +409,7 @@ def trend_month(ds,y,m,cl_):
     #日　抽出
     months['day']=month_ymd['day'].astype(str)
     
-    months['year'] = months['ytmpmonth = dsear'].astype(np.int) #yearの型変換
+    months['year'] = months['year'].astype(np.int) #yearの型変換
     months['month'] = months['month'].astype(np.int) #monthの型変換
     months = months.query('year == %s & month == %s'%(y,m))
     months = months.groupby('date',as_index=False).sum()
@@ -416,13 +439,13 @@ def trend_month(ds,y,m,cl_):
     ax = plt.gca() 
     ax.spines["top"].set_color("none")
     
-    #plt.show()
+    plt.show()
 
 
 
 #毎週の消費電力
-def trend_week(ds,y,m,count,cl_,name):
-    global pre_week,pre_week_ymd,pre_week1,pre_week2,ls,week,week_csv,x,week_t_24,week_glaph,mon
+def trend_week(ds,y,m,count,cl_):
+    global pre_week,pre_week_ymd,pre_week1,pre_week2,ls,week,week_csv,x,week_t_24,week_glaph,mon,name
     pre_week = ds
     pre_week_ymd = pre_week['date'].str.split('/',expand = True)
     pre_week_ymd.columns = ['w_year','month','day']
@@ -446,8 +469,9 @@ def trend_week(ds,y,m,count,cl_,name):
     pre_week1=pre_week1.groupby('date',as_index=False).mean() #1日が月曜日の時の重複をなくしている
 
     #第何週であるかの変数(cnt)作成
+    ls = []
     for i in list(range(1,12+1)):
-        ls.append(list(range(1,pre_week1.query("month == '%s'"%i)['month'].count()+1)))
+        ls = list(ls + list(range(1,pre_week1.query("month == '%s'"%i)['month'].count()+1)))
 
     pre_week1['cnt'] = ls
 
@@ -527,7 +551,7 @@ def trend_week(ds,y,m,count,cl_,name):
     plt.tick_params(color='white')      #軸目盛を表示させないために棒グラフと同じ色にしている
     plt.tick_params(axis='y', colors='black')
 
-    #plt.show()
+    plt.show()
 
 
 #日付トレンド分析
@@ -577,7 +601,7 @@ def trend_day(ds,cl,ymd):
     plt.tick_params(color='white')      #軸目盛を表示させないために棒グラフと同じ色にしている
     plt.tick_params(axis='y', colors='black')
 
-    #plt.show()
+    plt.show()
     
 #年間比較グラフ
 def glaph_(cl1,cl2,col1,col2,cl_):
@@ -614,3 +638,14 @@ def glaph_(cl1,cl2,col1,col2,cl_):
     plt.tick_params(labelsize=12) #x軸,y軸 目盛文字　サイズ
 
     #plt.show()
+    
+def makeImageBinary(fig):
+    #作成したグラフをPNG形式に変換
+    fig.canvas.draw()
+    im = np.array(fig.canvas.renderer.buffer_rgba())
+    img = Image.fromarray(im)
+    
+    #PNG画像をバイナリに変換
+    buffer = BytesIO() 
+    img.save(buffer, format="PNG")
+    return img,base64.b64encode(buffer.getvalue()).decode().replace("'", "")
