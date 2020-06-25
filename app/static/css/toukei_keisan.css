@@ -154,7 +154,7 @@ body {
 
 .input {
 	float: left;
-	width: 17%;
+	width: 19%;
 	border: solid 3px #F5F5F5;
 	background: #F5F5F5;
 }
@@ -172,6 +172,7 @@ body {
 	border: 1px solid;
 	box-shadow: 1px 1px 2px 0 #696969 inset ;
 	width: 160px;
+	margin-left: 10px;
 }
 
 .kikan_select {
@@ -183,6 +184,9 @@ body {
 	font-weight: bold;
 }
 
+.yyyymmdd {
+	margin-left: 10px;
+}
 
 .yyyymmdd input[type="text"] {
 	border-radius: .3em;
@@ -190,7 +194,6 @@ body {
 	transition: 0.3s;
 	border: 1px solid;
 	box-shadow: 1px 1px 2px 0 #696969 inset ;
-	font-weight: 500;
 }
 
 .number_input {
@@ -207,6 +210,7 @@ body {
 	transition: 0.3s;
 	border: 1px solid;
 	box-shadow: 1px 1px 2px 0 #696969 inset ;
+	margin-left: 10px;
 }
 
 .submit {
