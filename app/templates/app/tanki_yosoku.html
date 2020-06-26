@@ -19,7 +19,7 @@
 		
 		<script type="text/javascript">
 		$(function() {
-			$("#datepicker").datepicker();
+			$("#id_startForecast").datepicker();
 		 });
 		</script>
 		
@@ -58,37 +58,32 @@
 				<h2><i class="fas fa-chart-area fa-fw"></i>短期需要予測</h2>
 				
 				<div class="input">
-					<div class="jyuyou_inner">
-						<p>■使用データの指定</p>
-						<p class="db_select_data"><select name="data" required>
-						<option value="">-</option>
-						<option value="DBデータから選択1">DBデータから選択1</option>
-						<option value="DBデータから選択2">DBデータから選択2</option>
-						</select>
-					</div>
-					
-					<div class="chiiki">
-						<p>■地域の指定</p>
-						<p class="chiiki_select"><input type="text" required></p>
-					</div>
-					
-					<div class="kikan_select">
-						<p>■予測開始年月日年の選択</p>
-						<p class="yyyymmdd"><input type="text" id="datepicker" required></p>
-					</div>
-					
-					<div class="bunsekijiki">
-						<p class="font_weight">■予測時間帯の指定</p>
-						<p class="yosokujikan_description">
-								予測したい時間帯をカンマ区切りで３時間分入力してください。<br>
-								(例：14,15,16)
-							</p>
-							<p class="form_number"><input type="number"></p>
-					</div>
-					
-					<div class="submit_buttom">
-						<p class="submit"><input type="submit" value="実行"></p>
-					</div>
+    				<form action="{% url 'app:short_term_forecast' %}" method="post">	
+    					{% csrf_token %}
+
+    					<div class="chiiki">
+    						<p>■地域の指定</p>
+    						<p class="chiiki_select">{{form.area}}</p>
+    					</div>
+    					
+    					<div class="kikan_select">
+    						<p>■予測開始年月日年の選択</p>
+    						<p class="yyyymmdd">{{form.startForecast}}</p>
+    					</div>
+    					
+    					<div class="bunsekijiki">
+    						<p>■予測時間帯の指定</p>
+    						<p class="yosokujikan_description">
+    								予測したい時間帯をカンマ区切りで３時間分入力してください。<br>
+    								(例：14,15,16)
+    							</p>
+    							<p class="form_number">{{form.forecastTime}}</p>
+    					</div>
+    					
+    					<div class="submit_buttom">
+    						<p class="submit"><input type="submit" value="実行"></p>
+    					</div>
+    				</form>
 				</div>
 				
 				<div class="cp_tab">
@@ -98,6 +93,13 @@
 								<li><a href="#">短期需要量予測(グラフ)</a></li>
 							</ul>
 						</li>
+						
+						{% if graph %}
+						<div id="graph_img">
+                            <img src={{graph}} />
+						</div>
+						{% endif %}
+						
 					</ul>
 				</div>
 	

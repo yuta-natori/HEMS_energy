@@ -321,3 +321,11 @@ body {
 	-o-transition: 0.5s;
 	transition: 0.5s;
 }
+
+#designated_img {
+    display : none;
+}
+
+#graph_img {
+    display : block;
+}

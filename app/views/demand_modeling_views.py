@@ -224,7 +224,9 @@ def demand_modeling(request) :
     data_scr['remove']  = np.nan
     data_scr['remove'][0] = remove
     data_scr['remove'] = data_scr['remove'].replace(np.nan,' ', regex=True)
-
+    
+    #登録処理コメントアウト中
+    '''
     EnergyDataAfterScreening.objects.all().delete()
     regist_data = data_scr.drop(['id', 'area', 'year', 'month', 'date1', 'remove'], axis=1)
     
@@ -246,9 +248,9 @@ def demand_modeling(request) :
             val8=row[13],
             val9=row[14],
             val10=row[15]))
-        
+      
     EnergyDataAfterScreening.objects.bulk_create(energy_data)
-    #regist_data.to_sql('energy_data_after_screening', url, index=None,if_exists = 'replace')
+    '''
     params = {
         'histogram' : "data:image/png;base64," + histogram_img,
         'profiles' : profile_imgs,

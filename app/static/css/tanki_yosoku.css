@@ -231,6 +231,10 @@ body {
 	text-align: center;
 }
 
+.cp_tab {
+    display: inline-block;
+}
+
 .cp_tab ul{
 	margin:0;
 	padding:0;
@@ -291,4 +295,8 @@ body {
 	-ms-transition: 0.5s;
 	-o-transition: 0.5s;
 	transition: 0.5s;
+}
+
+#graph_img {
+    display: block;
 }
