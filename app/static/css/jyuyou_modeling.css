@@ -153,29 +153,49 @@ body {
 
 .input {
 	float: left;
-	width: 25%;
+	width: 21%;
+	border: solid 3px #F5F5F5;
+	background: #F5F5F5;
 }
 
-.jyuyou_class .jyuyou_inner {
+.jyuyou_inner {
 	padding: .5em;
+	font-weight: bold;
 }
 
 .kion_inner {
 	padding-left: .5em;
 	padding-bottom: .5em;
+	font-weight: bold;
 }
 
-.db_select_data {
+.db_select_data select[name="data"]{
+	border-radius: .3em;
+	padding: 0.3em;
+	transition: 0.3s;
+	border: 1px solid;
+	box-shadow: 1px 1px 2px 0 #696969 inset ;
 	margin-left: 10px;
+	width: 160px;
 }
 
 .chiiki {
 	padding-left: .5em;
 	padding-bottom: .5em;
+	font-weight: bold;
 }
 
-.chiiki_select {
+.chiiki_select input[type="text"]{
+	border-radius: .3em;
+	padding: 0.3em;
+	transition: 0.3s;
+	border: 1px solid;
+	box-shadow: 1px 1px 2px 0 #696969 inset ;
 	margin-left: 10px;
+}
+
+.font_weight {
+	font-weight: bold;
 }
 
 .kikan_select {
@@ -187,22 +207,37 @@ body {
 	margin-left: 10px;
 }
 
+.yyyymmdd input[type="text"]{
+	border-radius: .3em;
+	padding: 0.3em;
+	transition: 0.3s;
+	border: 1px solid;
+	box-shadow: 1px 1px 2px 0 #696969 inset ;
+}
+
 .number_input {
 	padding-left: .5em;
 	padding-bottom: .5em;
+	font-weight: bold;
 }
 
-.form_number {
+.form_number input[type="number"]{
+	border-radius: .3em;
+	padding: 0.3em;
+	transition: 0.3s;
+	border: 1px solid;
+	box-shadow: 1px 1px 2px 0 #696969 inset ;
 	margin-left: 10px;
 }
 
 .normal_number_input {
 	padding-left: .5em;
 	padding-bottom: .5em;
+	font-weight: bold;
 }
 
 .submit {
-	margin-left: 60px;
+	text-align: center;
 }
 
 .cp_tab ul{

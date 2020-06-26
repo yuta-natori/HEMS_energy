@@ -62,8 +62,9 @@
 					</div>
 					
 					<div class="kikan_select">
-					  <p>■分析開始年の選択</p>
-					  <p class="yyyy"><select name="year" required>
+					  <p class="font_weight">■分析開始年の選択</p>
+					  <p class="yyyy">from<br>
+					  <select name="year" required>
 							<option value="">-</option>
 							<option value="1950">1950</option>
 							<option value="1951">1951</option>
@@ -146,8 +147,9 @@
 							<option value="2028">2028</option>
 							<option value="2029">2029</option>
 							<option value="2030">2030</option>
-							</select>　年から
+							</select></p>
 							
+						<p class="yyyy">to<br>
 						<select name="year" required>
 							<option value="">-</option>
 							<option value="1950">1950</option>
@@ -231,18 +233,19 @@
 							<option value="2028">2028</option>
 							<option value="2029">2029</option>
 							<option value="2030">2030</option>
-						</select>　年まで
+						</select>
 						</p>
 					</div>
 					
 					<div class="kikan_select">
-						<p>■日毎トレンド分析</p>
+						<p class="font_weight">■日毎トレンド分析</p>
 						<p class="yyyymmdd"><input type="text" id="datepicker" required></p>
 					</div>
 					
 					<div class="kikan_select">
-						<p>■週間トレンド分析</p>
-						 <p class="yyyymmdd"><select name="year" required>
+						<p class="font_weight">■週間トレンド分析</p>
+						 <p class="yyyymmww">year<br>
+						 <select name="yyyymmww" required>
 							<option value="">-</option>
 							<option value="1950">1950</option>
 							<option value="1951">1951</option>
@@ -325,9 +328,10 @@
 							<option value="2028">2028</option>
 							<option value="2029">2029</option>
 							<option value="2030">2030</option>
-						</select>　年
+						</select></p>
 								
-						<select name="month" required>
+						<p class="yyyymmww">month<br>
+						<select name="yyyymmww" required>
 							<option value="">-</option>
 							<option value="1">1</option>
 							<option value="2">2</option>
@@ -341,20 +345,22 @@
 							<option value="10">10</option>
 							<option value="11">11</option>
 							<option value="12">12</option>
-						</select>　月
+						</select></p>
 						
-						<select name="week" required>
+						<p class="yyyymmww">week<br>
+						<select name="yyyymmww" required>
 							<option value="">-</option>
 							<option value="1">1</option>
 							<option value="2">2</option>
 							<option value="3">3</option>
 							<option value="4">4</option>
-						</select>　週目
+						</select></p>
 					</div>
 					
 					<div class="kikan_select">
-						<p>■年間トレンド分析</p>
-						 <p class="yyyymmdd"><select name="year" required>
+						<p class="font_weight">■年間トレンド分析</p>
+						 <p class="yyyymm">year<br>
+						 <select name="yyyymm" required>
 							<option value="">-</option>
 							<option value="1950">1950</option>
 							<option value="1951">1951</option>
@@ -437,9 +443,10 @@
 							<option value="2028">2028</option>
 							<option value="2029">2029</option>
 							<option value="2030">2030</option>
-						</select>　年
+						</select></p>
 								
-						<select name="month" required>
+						<p class="yyyymm">month<br>
+						<select name="yyyymm" required>
 							<option value="">-</option>
 							<option value="1">1</option>
 							<option value="2">2</option>
@@ -453,7 +460,7 @@
 							<option value="10">10</option>
 							<option value="11">11</option>
 							<option value="12">12</option>
-						</select>　月
+						</select></p>
 					</div>
 					
 					<div class="normal_number_input">
@@ -464,7 +471,7 @@
 					</div>
 					
 					<div class="result_select">
-						<p>■表示分析結果の選択</p>
+						<p class="font_weight">■表示分析結果の選択</p>
 						<p class="form_button">
 							<label><input type="radio" name="button" value="日毎トレンド分析" checked>日毎トレンド分析</label><br>
 							<label><input type="radio" name="button" value="週間トレンド分析">週間トレンド分析</label><br>
