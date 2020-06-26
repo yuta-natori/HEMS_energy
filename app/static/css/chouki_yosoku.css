@@ -329,3 +329,7 @@ body {
 #graph_img {
     display : block;
 }
+
+.img_class {
+    width: 510px;
+}
