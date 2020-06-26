@@ -14,6 +14,8 @@ from io import BytesIO
 import base64
 from matplotlib.backends.backend_pdf import PdfPages
 import img2pdf
+from PIL import Image
+from app.form.trend_analysis_form import TrendAnalysisFormClass
 
 #地域名のベクトル作成
 region = '新横浜'
@@ -26,10 +28,26 @@ rcParams['font.sans-serif'] = ['Hiragino Maru Gothic Pro', 'Yu Gothic',
 
 def jyuyou_trend(request):
     if request.method == 'GET':
-        return render(request, 'app/jyuyou_trend.html',{})
+        params = {
+            'form' : TrendAnalysisFormClass()    
+        }
+        
+        return render(request, 'app/jyuyou_trend.html',params)
 
 def execute_trend(request):
     if request.method == 'POST':
+        #グラフ画像を取得
+        png_img = Image.open('app/static/images/trend_everyday_total.png')
+        
+        params = {
+            'total' : "data:image/png;base64," + makeImageBinary(png_img),
+            'form' : TrendAnalysisFormClass(request.POST or None)
+        }
+        
+        #グラフをbase64形式で取得
+        return render(request, 'app/jyuyou_trend.html', params)
+    
+        '''2020/06/25: デモ版のためグラフ描画処理はコメントアウト中
         os.getcwd()
         ##年間
         #クラス分け
@@ -190,7 +208,7 @@ def execute_trend(request):
         #年間電力需要量－外気温トレンド
         #画像取得
         distribution, histogram = trend_year2_glaph(year_fc_t_2017,year_fc,'blue','green','red',2017,totalFlg)
-    
+        '''
         '''TODO: 作成したFormに置き換える
         params = {
             'distribution' : "data:image/png;base64," + distribution,
@@ -638,7 +656,7 @@ def glaph_(cl1,cl2,col1,col2,cl_):
     plt.tick_params(labelsize=12) #x軸,y軸 目盛文字　サイズ
 
     #plt.show()
-    
+'''2020/06/25 デモ版は下の makeImageBinary()を使用
 def makeImageBinary(fig):
     #作成したグラフをPNG形式に変換
     fig.canvas.draw()
@@ -649,3 +667,10 @@ def makeImageBinary(fig):
     buffer = BytesIO() 
     img.save(buffer, format="PNG")
     return img,base64.b64encode(buffer.getvalue()).decode().replace("'", "")
+'''
+#以下はデモ版のみ使用
+def makeImageBinary(img):
+    #画像をバイナリに変換
+    buffer = BytesIO()
+    img.save(buffer, format="PNG")
+    return base64.b64encode(buffer.getvalue()).decode().replace("'", "")
