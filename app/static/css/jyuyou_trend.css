@@ -342,3 +342,8 @@ body {
 	-o-transition: 0.5s;
 	transition: 0.5s;
 }
+
+#id_trendDisplay {
+    list-style: none;
+    padding-left: 0px;
+}
